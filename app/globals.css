@@ -1,10 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&display=swap');
 * {
   margin: 0;
   padding: 0;
   text-decoration: none !important;
   list-style-type: none !important;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Oxanium", sans-serif;
 }
 
 .logo-text{
@@ -12,11 +12,15 @@
 }
 
 .logo-img{
-    margin-left: 1rem;
-    mix-blend-mode: multiply !important;
+    border-radius: 20%;
 }
-
 
 .navbar{
     background-color: rgb(245, 242, 239) !important;
+}
+
+.mid-section{
+    background: url(https://static1.hkrtcdn.com/mbnext/static/media/common/best-selling-desktop-be.svg) ;
+    background-size:cover; 
+    background-repeat: no-repeat; 
 }

@@ -1,5 +1,5 @@
 'use client'; 
-import logo from "../assets/logo.jpg";
+import logo from "../assets/logo.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";  
@@ -31,7 +31,7 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg">
       <div className="container-fluid">
-        <Image src={logo} alt="logo" width={45} height={45} />
+        <Image src={logo} alt="logo" className="logo-img" width={45} height={45} />
         <button
           className="navbar-toggler"
           type="button"
@@ -46,8 +46,8 @@ export const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mx-auto">
             <li className="nav-item">
-              <a className="nav-link active fs-2 fw-bolder" aria-current="page" href="#">
-                RateMy<span className="text-primary">Pg</span>
+              <a className="nav-link active fs-2 fw-bolder d-none d-md-block d-lg-block" aria-current="page" href="#">
+                R a t e My <span className="text-primary">Pg.com</span>
               </a>
             </li>
           </ul>
