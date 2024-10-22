@@ -1,9 +1,10 @@
+import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import React from "react";
 
 const page = () => {
   return (
-    <div>
+    <>
       <Navbar />
       <div
         className="container-fluid top-section"
@@ -153,7 +154,11 @@ const page = () => {
           </div>
         </div>
       </div>
-    </div>
+      <div>
+        <h1>hello</h1>
+      </div>
+    <Footer/>
+    </>
   );
 };
 
