@@ -3,14 +3,14 @@ import logo from "../assets/logo.jpg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";  
-import { auth } from "../context/Firebase";  // Correctly import auth from your Firebase config
+import { auth } from "../context/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState } from 'react';
 
 export const Navbar = () => {
   const router = useRouter();
   const { user, loading } = useAuth(); 
-  const [showModal, setShowModal] = useState(false);  // State to manage modal visibility
+  const [showModal, setShowModal] = useState(false); 
 
   const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
@@ -56,7 +56,7 @@ export const Navbar = () => {
             <button
               type="button"
               className="btn btn-primary"
-              onClick={() => setShowModal(true)} // Show modal on button click
+              onClick={() => setShowModal(true)}
             >
               Sign In
             </button>
@@ -82,7 +82,6 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Modal for Sign In */}
       {showModal && (
         <div className="modal fade show" tabIndex={-1} style={{ display: 'block' }} aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -94,7 +93,7 @@ export const Navbar = () => {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowModal(false)} // Close modal
+                  onClick={() => setShowModal(false)}
                 />
               </div>
               <div className="modal-body">
@@ -106,7 +105,7 @@ export const Navbar = () => {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={() => setShowModal(false)} // Close modal
+                  onClick={() => setShowModal(false)} 
                 >
                   Close
                 </button>

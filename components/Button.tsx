@@ -1,11 +1,18 @@
-import React from 'react'
+import React from 'react';
+import clsx from 'clsx';
 
-const Button = () => {
-  return (
-    <div className='btn btn-primary'>
-        Sign In
-    </div>
-  )
+interface ButtonProps {
+    className?: string; 
+    text?: string;      
+    onClick?: ()=> void;
 }
 
-export default Button
+const Button: React.FC<ButtonProps> = ({ className, text = 'Sign In', onClick }) => {
+    return (
+        <div className={clsx('btn btn-primary', className, onClick)}>
+            {text}
+        </div>
+    );
+};
+
+export default Button;

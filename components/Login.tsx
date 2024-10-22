@@ -1,12 +1,12 @@
 'use client';
-
 import { useRouter } from 'next/navigation';
 import { auth } from "../context/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { useAuth } from "../context/AuthContext";  // Import useAuth
+import { useAuth } from "../context/AuthContext";
+import Button from './Button';
 
 export const Login = () => {
-    const { user } = useAuth();  // Check global auth state
+    const { user } = useAuth(); 
     const router = useRouter();
 
     const googleLogin = async () => {
@@ -22,7 +22,7 @@ export const Login = () => {
     };
 
     if (user) {
-        router.replace('/profile');  // If logged in, go to profile
+        router.replace('/profile');  
         return null;
     }
 
@@ -35,9 +35,7 @@ export const Login = () => {
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                     </div>
                     <div className="modal-body">
-                        <button className="btn btn-primary" onClick={googleLogin}>
-                            Login with Google
-                        </button>
+                    <Button className="btn btn-primary" text="Sign In with  Google" onClick={googleLogin}/>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
