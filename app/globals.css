@@ -24,3 +24,11 @@
     background-size:cover; 
     background-repeat: no-repeat; 
 }
+
+.h1-hr {
+    width: 5rem;
+    border-width: 5px;
+    margin-top: 0;
+    color: rgb(38, 38, 38) !important;
+    transform: skew(-45deg);
+}
