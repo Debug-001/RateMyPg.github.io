@@ -6,6 +6,8 @@ import { useAuth } from "../context/AuthContext";
 import { auth } from "../context/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState } from "react";
+import Button from "./Button";
+import Link from "next/link";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -25,7 +27,7 @@ export const Navbar = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return null;
   }
 
   return (
@@ -38,6 +40,16 @@ export const Navbar = () => {
           width={45}
           height={45}
         />
+        <li className="nav-item px-4 d-flex flex-column justify-content-center align-items-center">
+          <a
+            className="nav-link active fs-2 fw-bolder d-none d-md-block d-lg-block"
+            aria-current="page"
+            href="#"
+          >
+            R a t e My <span className="text-primary">Pg.com</span>
+          </a>
+          {/* <hr className="h1-hr" /> */}
+        </li>
         <button
           className="navbar-toggler"
           type="button"
@@ -49,24 +61,37 @@ export const Navbar = () => {
         >
           <span className="navbar-toggler-icon" />
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav mx-auto">
-            <li className="nav-item d-flex flex-column justify-content-center align-items-center">
-              <a
-                className="nav-link active fs-2 fw-bolder d-none d-md-block d-lg-block"
-                aria-current="page"
-                href="#"
-              >
-                R a t e My <span className="text-primary">Pg.com</span>
-              </a>
-              <hr className="h1-hr" />
+        <div
+          className="collapse navbar-collapse d-flex justify-content-between align-items-center"
+          id="navbarNav"
+        >
+          <ul className="navbar-nav d-flex justify-content-center gap-4 fs-5">
+            <li className="nav-item hover-underline-animation">
+              <Link href="/forums" className="text-black nav-link">
+                Forums
+              </Link>
+            </li>
+            <li className="nav-item hover-underline-animation">
+              <Link href="/all" className="text-black nav-link">
+                Pg's
+              </Link>
+            </li>
+            <li className="nav-item hover-underline-animation">
+              <Link href="/gc" className="text-black nav-link">
+                Global Chat
+              </Link>
+            </li>
+            <li className="nav-item hover-underline-animation">
+              <Link href="/aboutus" className="text-black nav-link">
+                About Us
+              </Link>
             </li>
           </ul>
 
           {!user ? (
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn-custom"
               onClick={() => setShowModal(true)}
             >
               Sign In

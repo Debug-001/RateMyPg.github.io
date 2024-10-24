@@ -1,34 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&display=swap");
 * {
   margin: 0;
   padding: 0;
   text-decoration: none !important;
   list-style-type: none !important;
   font-family: "Oxanium", sans-serif;
+  /* cursor: none; */
 }
 
-.logo-text{
-    margin-left: 37rem;
+.logo-img {
+  border-radius: 20%;
 }
 
-.logo-img{
-    border-radius: 20%;
+.navbar {
+  background-color: rgb(245, 242, 239) !important;
 }
 
-.navbar{
-    background-color: rgb(245, 242, 239) !important;
-}
-
-.mid-section{
-    background: url(https://static1.hkrtcdn.com/mbnext/static/media/common/best-selling-desktop-be.svg) ;
-    background-size:cover; 
-    background-repeat: no-repeat; 
+.mid-section {
+  background: url(https://static1.hkrtcdn.com/mbnext/static/media/common/best-selling-desktop-be.svg);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .h1-hr {
-    width: 5rem;
-    border-width: 5px;
-    margin-top: 0;
-    color: rgb(38, 38, 38) !important;
-    transform: skew(-45deg);
+  width: 5rem;
+  border-width: 5px;
+  margin-top: 0;
+  color: rgb(38, 38, 38) !important;
+  transform: skew(-45deg);
+}
+
+.navbar-nav {
+  margin-left: 14rem;
+}
+
+.nav-item {
+  color: #041f31;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.nav-item:hover {
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: 900;
+  transition: all 0.25 ease-in-out;
+}
+
+.hover-underline-animation:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000;
+  transform-origin: bottom right;
+  transition: all 0.25s ease-in-out;
+}
+
+.hover-underline-animation:hover:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+  color: #000;
+}
+
+.btn-custom {
+  background-color: #041f31;
+  border: 2px solid #000;
+  border-radius: 10px;
+  color: #fff;
+  padding: 7px 17px;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.btn-custom:hover {
+  background-color: #3d3d3d;
+  border: 2px solid #3d3d3d;
+  color: #fff;
+  transition: all .1s ease-in-out;
+}
+
+.search-bar-text:hover{
+    color: rgb(0, 170, 255) !important;
+transition: all .2s ease-in-out !important;
 }

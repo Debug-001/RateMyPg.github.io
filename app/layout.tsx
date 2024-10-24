@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from '@/context/AuthContext';
 import Script from "next/script";
+import ClientLayout from "./ClientLayout"; 
 
 export const metadata: Metadata = {
-  title: "RateMyPg ",
+  title: "RateMyPg",
   description: "Find the perfect dorm for your college experience! Browse ratings, photos, and honest feedback from students who’ve lived there, only on RateMyDorm.",
 };
 
@@ -16,10 +17,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <link rel="icon" href="/bt.ico" />
+      <head>
+        <link rel="icon" href="/bt.ico" />
+      </head>
       <body>
         <AuthProvider>
-        {children}
+          <ClientLayout>
+            {children}
+          </ClientLayout>
         </AuthProvider>
         <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
@@ -28,7 +33,6 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
       </body>
-
     </html>
   );
 }

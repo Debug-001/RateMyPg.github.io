@@ -1,3 +1,4 @@
+'use client'
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import Image from "next/image";
@@ -9,6 +10,7 @@ import christ from "../assets/christ.jpg";
 import pesu from "../assets/pesu.jpg";
 import rvce from "../assets/rvce.jpg";
 import { CgProfile } from "react-icons/cg";
+import { Fade } from "react-awesome-reveal";
 
 const page = () => {
   return (
@@ -61,7 +63,7 @@ const page = () => {
             </button>
           </div>
           <Link href="/all">
-            <p className="text-white">All Universities</p>
+            <p className="search-bar-text text-white">All Universities</p>
           </Link>
         </div>
       </div>
@@ -69,26 +71,35 @@ const page = () => {
       <div className="container-fluid mid-section p-5 mt-4">
         <div className="row  d-flex  justify-content-center align-items-center pb-5">
           <div className="col-6 col-md-4">
+          <Fade direction="right" triggerOnce>
             <h2 className="display-6 fw-bold">Find your University</h2>
             <p className="text-secondary fs-5">
               We've collected Pg reviews from over 1500+ North/South Indian
               Dorms. Search for your university to get started.
             </p>
+          </Fade>
           </div>
           <div className="col-6 col-md-4">
+          {/* <Fade direction="left" triggerOnce> */}
             <Image src={headlogo1} width={500} height={300} alt="header-img" />
+            {/* </Fade> */}
           </div>
         </div>
         <div className="row pt-4  d-flex  justify-content-center align-items-center pb-5">
           <div className="col-6 col-md-4 mx-5">
+          {/* <Fade direction="up" triggerOnce> */}
             <Image src={headlogo2} width={400} height={300} alt="header-img" />
+            {/* </Fade> */}
           </div>
           <div className="col-6 col-md-4">
+          <Fade direction="left" triggerOnce>
             <h2 className="display-6 fw-bold">Anonymous PG Reviews</h2>
             <p className="text-secondary fs-5">
               Let every student know about your PG experience! Your review will
               be anonymous, and your feedback will guide future improvements.
             </p>
+            </Fade>
+
           </div>
         </div>
       </div>
@@ -118,7 +129,7 @@ const page = () => {
                     Koramangala Industrial Layout, Koramangala, Bengaluru,
                     Karnataka 560029
                   </p>
-                  <a href="#" className="btn btn-secondary">
+                  <a href="/" className="btn-custom">
                     Explore
                   </a>
                 </div>
