@@ -11,7 +11,7 @@ import Link from "next/link";
 
 export const Navbar = () => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user } = useAuth(); // Removed loading state
   const [showModal, setShowModal] = useState(false);
 
   const googleLogin = async () => {
@@ -19,16 +19,12 @@ export const Navbar = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
-        router.replace("/profile");
+        router.replace("/");
       }
     } catch (error) {
       console.error("Error during Google login:", error);
     }
   };
-
-  if (loading) {
-    return null;
-  }
 
   return (
     <nav className="navbar navbar-expand-lg bg-white">
@@ -48,7 +44,6 @@ export const Navbar = () => {
           >
             R a t e My <span className="text-primary">Pg.com</span>
           </a>
-          {/* <hr className="h1-hr" /> */}
         </li>
         <button
           className="navbar-toggler"

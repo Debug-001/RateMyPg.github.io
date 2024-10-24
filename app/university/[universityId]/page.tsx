@@ -1,30 +1,32 @@
-'use client'; // Ensure this is the first line in your component
-
+'use client'; 
 import { useEffect, useState } from "react";
-import { db } from "@/context/Firebase"; // Your Firebase config
+import { db } from "@/context/Firebase"; 
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+interface University {
+  id: string;
+  name: string;
+  address: string;
+  imageURL?: string; 
+}
 
-const UniversityDetailsPage = ({ params }) => { // Destructure params to get universityId
-  const [university, setUniversity] = useState(null);
-  const [loading, setLoading] = useState(true);
+const UniversityDetailsPage = ({ params }) => { 
+  const [university, setUniversity] = useState<University | null>(null);
   const [pgs, setPgs] = useState([]);
-
-  const { universityId } = params; // Directly get universityId from params
+  const { universityId } = params;
 
   useEffect(() => {
     const fetchUniversityData = async () => {
-      if (!universityId) return; // Check if universityId is defined
+      if (!universityId) return; 
 
       try {
-        const universityDoc = doc(db, "universities", universityId); // Fetch university document
+        const universityDoc = doc(db, "universities", universityId);
         const universitySnapshot = await getDoc(universityDoc);
 
         if (universitySnapshot.exists()) {
-          setUniversity({ id: universitySnapshot.id, ...universitySnapshot.data() });
+          setUniversity({ id: universitySnapshot.id, ...universitySnapshot.data() } as University);
 
-          // Fetch PGs from the subcollection
           const pgsCollection = collection(universityDoc, "pgs");
           const pgsSnapshot = await getDocs(pgsCollection);
           const pgsList = pgsSnapshot.docs.map((doc) => ({
@@ -37,31 +39,27 @@ const UniversityDetailsPage = ({ params }) => { // Destructure params to get uni
         }
       } catch (error) {
         console.error("Error fetching university data: ", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchUniversityData();
-  }, [universityId]); // Dependency on universityId
-
-  if (loading) return <p>Loading...</p>;
-  if (!university) return <p>No university found.</p>;
+  }, [universityId]); 
 
   return (
     <>
       <Navbar />
       <div className="container">
-        <h1>{university.name}</h1>
-        <p>{university.address}</p>
-        {university.imageURL && (
+        <h1>{university?.name || "University Not Found"}</h1>
+        <p>{university?.address || "No Address Available"}</p>
+        {university?.imageURL ? (
           <img
             src={university.imageURL}
             alt={university.name}
             style={{ maxWidth: "100%", height: "auto", borderRadius: "8px" }}
           />
+        ) : (
+          <p>No image available</p>
         )}
-        {!university.imageURL && <p>No image available</p>}
 
         <h2>PGs:</h2>
         {pgs.length === 0 ? (

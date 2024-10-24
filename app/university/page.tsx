@@ -78,7 +78,7 @@ const UniversityPage = () => {
           <ul className="d-flex gap-5 px-5 pt-4">
             {universities.map((university) => (
               <li key={university.id} className="mb-4">
-                <Link href={`/universities/${university.id}`} passHref>
+                <Link href={`/university/${university.id}`} passHref>
                   <p
                     className="fw-bolder uni-name fs-5 text-black"
                     style={{ cursor: "pointer" }}
