@@ -14,17 +14,12 @@ export const Login = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             if (result.user) {
-                router.replace('/profile'); 
+                router.replace('/'); 
             }
         } catch (error) {
             console.error("Error during Google login:", error);
         }
     };
-
-    if (user) {
-        router.replace('/profile');  
-        return null;
-    }
 
     return (
         <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">

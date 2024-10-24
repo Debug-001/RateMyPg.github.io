@@ -31,7 +31,7 @@ export const Navbar = () => {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg">
+    <nav className="navbar navbar-expand-lg bg-white">
       <div className="container-fluid">
         <Image
           src={logo}
@@ -44,7 +44,7 @@ export const Navbar = () => {
           <a
             className="nav-link active fs-2 fw-bolder d-none d-md-block d-lg-block"
             aria-current="page"
-            href="#"
+            href="/"
           >
             R a t e My <span className="text-primary">Pg.com</span>
           </a>
@@ -72,13 +72,18 @@ export const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item hover-underline-animation">
-              <Link href="/all" className="text-black nav-link">
+              <Link href="/university" className="text-black nav-link">
                 Pg's
               </Link>
             </li>
             <li className="nav-item hover-underline-animation">
               <Link href="/gc" className="text-black nav-link">
                 Global Chat
+              </Link>
+            </li>
+            <li className="nav-item hover-underline-animation">
+              <Link href="/adduni" className="text-black nav-link">
+                Add University
               </Link>
             </li>
             <li className="nav-item hover-underline-animation">

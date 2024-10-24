@@ -16,7 +16,7 @@
   background-color: rgb(245, 242, 239) !important;
 }
 
-.mid-section {
+.mid-section{
   background: url(https://static1.hkrtcdn.com/mbnext/static/media/common/best-selling-desktop-be.svg);
   background-size: cover;
   background-repeat: no-repeat;
@@ -31,7 +31,7 @@
 }
 
 .navbar-nav {
-  margin-left: 14rem;
+  margin-left: 10rem;
 }
 
 .nav-item {
@@ -91,4 +91,12 @@
 .search-bar-text:hover{
     color: rgb(0, 170, 255) !important;
 transition: all .2s ease-in-out !important;
+}
+
+.uni-name:hover{
+font-size: 22px !important;
+transition: all .2s;
+padding: 5px; 
+border: 2px solid rgb(115, 115, 115);
+border-radius: 10px;
 }

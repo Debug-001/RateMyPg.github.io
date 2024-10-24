@@ -62,7 +62,7 @@ const page = () => {
               Search
             </button>
           </div>
-          <Link href="/all">
+          <Link href="/university">
             <p className="search-bar-text text-white">All Universities</p>
           </Link>
         </div>
