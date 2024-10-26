@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../context/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import React, { useState } from "react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import toast, { Toaster } from "react-hot-toast";
