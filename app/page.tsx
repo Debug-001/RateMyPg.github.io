@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import Image from "next/image";
@@ -71,35 +71,35 @@ const page = () => {
       <div className="container-fluid mid-section p-5 mt-4">
         <div className="row  d-flex  justify-content-center align-items-center pb-5">
           <div className="col-6 col-md-4">
-          <Fade direction="right" triggerOnce>
-            <h2 className="display-6 fw-bold">Find your University</h2>
-            <p className="text-secondary fs-5">
-              We've collected Pg reviews from over 1500+ North/South Indian
-              Dorms. Search for your university to get started.
-            </p>
-          </Fade>
+            <Fade direction="right" triggerOnce>
+              <h2 className="display-6 fw-bold">Find your University</h2>
+              <p className="text-secondary fs-5">
+                We've collected Pg reviews from over 1500+ North/South Indian
+                Dorms. Search for your university to get started.
+              </p>
+            </Fade>
           </div>
           <div className="col-6 col-md-4">
-          {/* <Fade direction="left" triggerOnce> */}
+            {/* <Fade direction="left" triggerOnce> */}
             <Image src={headlogo1} width={500} height={300} alt="header-img" />
             {/* </Fade> */}
           </div>
         </div>
         <div className="row pt-4  d-flex  justify-content-center align-items-center pb-5">
           <div className="col-6 col-md-4 mx-5">
-          {/* <Fade direction="up" triggerOnce> */}
+            {/* <Fade direction="up" triggerOnce> */}
             <Image src={headlogo2} width={400} height={300} alt="header-img" />
             {/* </Fade> */}
           </div>
           <div className="col-6 col-md-4">
-          <Fade direction="left" triggerOnce>
-            <h2 className="display-6 fw-bold">Anonymous PG Reviews</h2>
-            <p className="text-secondary fs-5">
-              Let every student know about your PG experience! Your review will
-              be anonymous, and your feedback will guide future improvements.
-            </p>
+            <Fade direction="left" triggerOnce>
+              <h2 className="display-6 fw-bold">Anonymous PG Reviews</h2>
+              <p className="text-secondary fs-5">
+                Let every student know about your PG experience! Your review
+                will be anonymous, and your feedback will guide future
+                improvements.
+              </p>
             </Fade>
-
           </div>
         </div>
       </div>
@@ -116,8 +116,8 @@ const page = () => {
           <div className="row">
             <div className="col-6 col-md-4">
               <div className="card" style={{ width: "18rem" }}>
-                <img
-                  src="https://lh5.googleusercontent.com/p/AF1QipNFAXsE9gPW2o-oCn8sStkkOX_NIuDY5e282VmQ=w408-h288-k-no"
+                <Image
+                  src={`url(./pg2.png)`}
                   className="card-img-top"
                   alt="..."
                   style={{ width: "100%", height: "200px", objectFit: "cover" }}
@@ -137,9 +137,8 @@ const page = () => {
             </div>
             <div className="col-6 col-md-4">
               <div className="card" style={{ width: "18rem" }}>
-                <img
-                  src="https://lh5.googleusercontent.com/p/AF1QipPD6K222piKZffNRh0IardP4xUBNJeFLj-0O2n0=w408-h544-k-no"
-                  className="card-img-top"
+                <Image
+                  src={`url(./pg2.png)`}
                   alt="..."
                   style={{ width: "100%", height: "225px", objectFit: "cover" }}
                 />
@@ -159,11 +158,10 @@ const page = () => {
             </div>
             <div className="col-6 col-md-4">
               <div className="card" style={{ width: "18rem" }}>
-                <img
-                  src="https://lh5.googleusercontent.com/p/AF1QipNmeGWv7Mta_rQ8DCVW_aYs5hwnXsDVJ4hTKd6x=w408-h464-k-no"
-                  className="card-img-top"
+                <Image
+                  src={`url(./pg2.png)`}
                   alt="..."
-                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                  style={{ width: "100%", height: "225px", objectFit: "cover" }}
                 />
                 <div className="card-body">
                   <h5 className="card-title">ROYAL LUXURY PG FOR GENTS</h5>

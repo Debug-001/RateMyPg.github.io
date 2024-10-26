@@ -3,7 +3,7 @@ import { auth } from "../../context/Firebase";
 import React, { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import Image from "next/image";
+// import Image from "next/image";
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState(null);
