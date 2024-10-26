@@ -4,6 +4,7 @@ import { db } from "@/context/Firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+
 interface University {
   id: string;
   name: string;
@@ -11,9 +12,15 @@ interface University {
   imageURL?: string; 
 }
 
+interface PG {
+  id: string;
+  name: string;
+  images?: string[]; // Assuming images is an array of strings (URLs)
+}
+
 const UniversityDetailsPage = ({ params }) => { 
   const [university, setUniversity] = useState<University | null>(null);
-  const [pgs, setPgs] = useState([]);
+  const [pgs, setPgs] = useState<PG[]>([]);
   const { universityId } = params;
 
   useEffect(() => {
@@ -32,7 +39,7 @@ const UniversityDetailsPage = ({ params }) => {
           const pgsList = pgsSnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
-          }));
+          })) as PG[];
           setPgs(pgsList);
         } else {
           console.error("University not found");
@@ -67,7 +74,23 @@ const UniversityDetailsPage = ({ params }) => {
         ) : (
           <ul>
             {pgs.map((pg) => (
-              <li key={pg.id}>{pg.name || "No Name Provided"}</li>
+              <li key={pg.id}>
+                <h3>{pg.name || "No Name Provided"}</h3>
+                {pg.images && pg.images.length > 0 ? (
+                  <div className="image-gallery">
+                    {pg.images.map((imageUrl, index) => (
+                      <img
+                        key={index}
+                        src={imageUrl}
+                        alt={`Image for ${pg.name}`}
+                        style={{ maxWidth: "100px", height: "auto", marginRight: "10px", borderRadius: "5px" }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p>No images available</p>
+                )}
+              </li>
             ))}
           </ul>
         )}

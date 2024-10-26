@@ -15,7 +15,9 @@ import { useAuth } from "@/context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 
 const AdminPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth(); // Get user and loading state from auth context
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
   const [universityName, setUniversityName] = useState("");
   const [universityAddress, setUniversityAddress] = useState("");
   const [universityImageUrl, setUniversityImageUrl] = useState("");
@@ -136,10 +138,17 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    if (!loading && user?.email !== "ombhatt1158@gmail.com") {
-      window.location.href = "/";
+    if (!loading) {
+      if (user?.email === "ombhatt1158@gmail.com") {
+        setIsAuthorized(true);
+      } else {
+        window.location.href = "/"
+      }
     }
   }, [loading, user]);
+  if (loading || !isAuthorized) {
+    return null;
+  }
 
   return (
     <>
@@ -193,73 +202,73 @@ const AdminPage = () => {
             </button>
           </div>
           <div className="d-flex gap-4 flex-column pt-5">
-          <h2 className="fs-3 mb-2 mt-8">Add PG's near your University</h2>
-          <div className="dropdown">
-            <button
-              className="btn-custom dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {selectedUniversityId
-                ? universities.find(
-                    (university) => university.id === selectedUniversityId
-                  )?.name || "Select University"
-                : "Select University"}
-            </button>
-            <ul className="dropdown-menu">
-              {universities.map((university) => (
-                <li key={university.id}>
-                  <a
-                    className="dropdown-item"
-                    href="#"
-                    onClick={() => setSelectedUniversityId(university.id)}
-                  >
-                    {university.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            <h2 className="fs-3 mb-2 mt-8">Add PG's near your University</h2>
+            <div className="dropdown">
+              <button
+                className="btn-custom dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {selectedUniversityId
+                  ? universities.find(
+                      (university) => university.id === selectedUniversityId
+                    )?.name || "Select University"
+                  : "Select University"}
+              </button>
+              <ul className="dropdown-menu">
+                {universities.map((university) => (
+                  <li key={university.id}>
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={() => setSelectedUniversityId(university.id)}
+                    >
+                      {university.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div className="d-flex flex-column gap-3 w-50">
-            <div className="input-group">
-              <input
-                type="text"
-                placeholder="PG Name"
-                value={pgName}
-                onChange={(e) => setPgName(e.target.value)}
-                className="form-control"
-                aria-label="PG Name"
-              />
+            <div className="d-flex flex-column gap-3 w-50">
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="PG Name"
+                  value={pgName}
+                  onChange={(e) => setPgName(e.target.value)}
+                  className="form-control"
+                  aria-label="PG Name"
+                />
+              </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="PG Location"
+                  value={pgLocation}
+                  onChange={(e) => setPgLocation(e.target.value)}
+                  className="form-control"
+                  aria-label="PG Location"
+                />
+              </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="PG Owner"
+                  value={pgOwner}
+                  onChange={(e) => setPgOwner(e.target.value)}
+                  className="form-control"
+                  aria-label="PG Owner"
+                />
+              </div>
+              <button
+                onClick={handleAddPg}
+                className="btn-custom w-25 text-white p-2 rounded"
+              >
+                Add PG
+              </button>
             </div>
-            <div className="input-group">
-              <input
-                type="text"
-                placeholder="PG Location"
-                value={pgLocation}
-                onChange={(e) => setPgLocation(e.target.value)}
-                className="form-control"
-                aria-label="PG Location"
-              />
-            </div>
-            <div className="input-group">
-              <input
-                type="text"
-                placeholder="PG Owner"
-                value={pgOwner}
-                onChange={(e) => setPgOwner(e.target.value)}
-                className="form-control"
-                aria-label="PG Owner"
-              />
-            </div>
-            <button
-              onClick={handleAddPg}
-              className="btn-custom w-25 text-white p-2 rounded"
-            >
-              Add PG
-            </button>
-          </div>
           </div>
         </div>
       </div>

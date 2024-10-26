@@ -6,8 +6,10 @@ import { useAuth } from "../context/AuthContext";
 import { auth } from "../context/Firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState } from "react";
-import Button from "./Button";
 import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
+import toast, { Toaster } from "react-hot-toast";
+
 
 export const Navbar = () => {
   const router = useRouter();
@@ -20,11 +22,17 @@ export const Navbar = () => {
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
         router.replace("/");
+        toast.success('Logged in Succesfully')
       }
     } catch (error) {
       console.error("Error during Google login:", error);
+      toast.error('Log In failed')
     }
   };
+
+  function logout(){
+    toast.success('Log Out Success')
+  }
 
   return (
     <nav className="navbar navbar-expand-lg bg-white">
@@ -89,17 +97,13 @@ export const Navbar = () => {
           </ul>
 
           {!user ? (
-            <button
-              type="button"
-              className="btn-custom"
-              onClick={() => setShowModal(true)}
-            >
-              Sign In
+             <button className="btn-custom d-flex align-items-center m-2 gap-1" onClick={googleLogin}>
+             <FcGoogle size={20}/>Sign In with Google
             </button>
           ) : (
             <div className="dropdown">
               <button
-                className="btn btn-primary dropdown-toggle"
+                className="btn-custom dropdown-toggle mx-3"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -115,10 +119,11 @@ export const Navbar = () => {
                     Profile
                   </button>
                 </li>
+                <div className="dropdown-divider"/>
                 <li>
                   <button
                     className="dropdown-item"
-                    onClick={() => auth.signOut()}
+                    onClick={() => auth.signOut() && logout()}
                   >
                     Logout
                   </button>
@@ -128,45 +133,7 @@ export const Navbar = () => {
           )}
         </div>
       </div>
-
-      {showModal && (
-        <div
-          className="modal fade show"
-          tabIndex={-1}
-          style={{ display: "block" }}
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h1 className="modal-title fs-5" id="exampleModalLabel">
-                  Sign in
-                </h1>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                />
-              </div>
-              <div className="modal-body">
-                <button className="btn btn-primary" onClick={googleLogin}>
-                  Login with Google
-                </button>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Toaster/>
     </nav>
   );
 };
