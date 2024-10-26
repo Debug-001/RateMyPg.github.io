@@ -13,9 +13,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 export const Navbar = () => {
   const router = useRouter();
-  const { user } = useAuth(); // Removed loading state
-  const [showModal, setShowModal] = useState(false);
-
+  const { user } = useAuth();
   const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {

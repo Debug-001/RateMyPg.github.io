@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { IoIosArrowForward } from 'react-icons/io';
@@ -7,7 +7,9 @@ import { db } from '@/context/Firebase';
 
 const NavAddress = () => {
   const pathname = usePathname();
-  const pathSegments = pathname?.split("/").filter(Boolean) || [];
+
+  // Use useMemo to memoize pathSegments
+  const pathSegments = useMemo(() => pathname?.split("/").filter(Boolean) || [], [pathname]);
 
   const [universityName, setUniversityName] = useState<string | null>(null);
   const [pgName, setPgName] = useState<string | null>(null);
@@ -47,13 +49,9 @@ const NavAddress = () => {
         {pathSegments.map((segment, index) => {
           const routePath = '/' + pathSegments.slice(0, index + 1).join("/");
           let displayText = decodeURIComponent(segment);
-
-          // Determine the display text based on the index
           if (index === pathSegments.length - 2) {
-            // Second last segment should be university name if available
             displayText = universityName || displayText;
           } else if (index === pathSegments.length - 1) {
-            // Last segment should be PG name if available; fallback to university name
             displayText = pgName || universityName || displayText;
           }
 
@@ -65,7 +63,6 @@ const NavAddress = () => {
           );
         })}
       </ol>
-
       <style jsx>{`
         nav {
           font-size: 1rem;
