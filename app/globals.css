@@ -71,6 +71,14 @@
   color: #000;
 }
 
+.btn-photo{
+  color: black;
+  background-color: whitesmoke;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 8px;
+}
+
 .btn-custom {
   background-color: #041f31;
   border: 2px solid #000;

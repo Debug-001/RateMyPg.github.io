@@ -5,6 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import Link from "next/link";
+import NavAddress from "@/components/NavAddress";
 
 const UniversityPage = () => {
   const [universities, setUniversities] = useState([]);
@@ -66,9 +67,9 @@ const UniversityPage = () => {
           </h1>
         </div>
       </div>
-
-      <div className="mid-section pb-5 pt-5">
-        <div className="d-flex flex-column mx-5">
+      <div className="container mid-section">
+        <NavAddress/>
+        <div className="d-flex flex-column pt-4">
           <h2 className="fs-1 font-bold fw">List of Universities</h2>
           <hr className="h1-hr" />
         </div>
