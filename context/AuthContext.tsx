@@ -4,6 +4,7 @@ import React, { createContext, useState, useEffect, useContext, ReactNode } from
 import { auth } from './Firebase'; 
 
 interface User {
+    photoURL: string | StaticImport;
     uid: string;
     email?: string | null;
     displayName?: string | null;

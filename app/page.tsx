@@ -116,12 +116,12 @@ const page = () => {
           <div className="row">
             <div className="col-6 col-md-4">
               <div className="card" style={{ width: "18rem" }}>
-                <Image
+                {/* <Image
                   src={`url(./pg2.png)`}
                   className="card-img-top"
                   alt="..."
                   style={{ width: "100%", height: "200px", objectFit: "cover" }}
-                />
+                /> */}
                 <div className="card-body">
                   <h5 className="card-title">New-Slv Stays Luxury Pg</h5>
                   <p className="card-text">
@@ -137,11 +137,13 @@ const page = () => {
             </div>
             <div className="col-6 col-md-4">
               <div className="card" style={{ width: "18rem" }}>
-                <Image
+                {/* <Image
                   src={`url(./pg2.png)`}
                   alt="..."
                   style={{ width: "100%", height: "225px", objectFit: "cover" }}
-                />
+                  width={100}
+                  height={225}
+                /> */}
                 <div className="card-body">
                   <h5 className="card-title">
                     Panchavati sri Anjeneya Luxury pg
@@ -158,11 +160,11 @@ const page = () => {
             </div>
             <div className="col-6 col-md-4">
               <div className="card" style={{ width: "18rem" }}>
-                <Image
+                {/* <Image
                   src={`url(./pg2.png)`}
                   alt="..."
                   style={{ width: "100%", height: "225px", objectFit: "cover" }}
-                />
+                /> */}
                 <div className="card-body">
                   <h5 className="card-title">ROYAL LUXURY PG FOR GENTS</h5>
                   <p className="card-text">
