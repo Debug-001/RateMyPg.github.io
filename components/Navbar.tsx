@@ -81,7 +81,7 @@ export const Navbar = () => {
 
           {!user ? (
             <button
-              className="btn-custom btn d-flex align-items-center m-2 gap-1"
+              className="btn-custom d-flex align-items-center m-2 gap-1"
               onClick={googleLogin}
             >
               <FcGoogle size={20} /> Sign In with Google

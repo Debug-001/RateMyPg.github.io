@@ -56,6 +56,7 @@ const UniversityDetailsPage = ({ params }) => {
 
     fetchUniversityData();
   }, [universityId]);
+  
   return (
     <>
       <Navbar />

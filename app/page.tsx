@@ -12,11 +12,17 @@ import rvce from "../assets/rvce.jpg";
 import { CgProfile } from "react-icons/cg";
 import { Fade } from "react-awesome-reveal";
 import SearchBar from "@/components/SearchBar";
-import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/context/Firebase";
 import Button from "@/components/Button";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
+interface University {
+  id: string;
+  name: string;
+  address: string;
+}
 interface PG {
+  universityId: any;
   id: string;
   name: string;
   location: string;
@@ -25,6 +31,41 @@ interface PG {
 
 const page = ({ params }) => {
   const [pgs, setPgs] = useState<PG[]>([]);
+  const [university, setUniversity] = useState<University | null>(null);
+  const { universityId } = params;
+
+  useEffect(() => {
+    const fetchUniversityData = async () => {
+      if (!universityId) return;
+
+      try {
+        const universityDoc = doc(db, "universities", universityId);
+        const universitySnapshot = await getDoc(universityDoc);
+
+        if (universitySnapshot.exists()) {
+          setUniversity({
+            id: universitySnapshot.id,
+            ...universitySnapshot.data(),
+          } as University);
+
+          const pgsCollection = collection(universityDoc, "pgs");
+          const pgsSnapshot = await getDocs(pgsCollection);
+          const pgsList = pgsSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            universityId,
+            ...doc.data(),
+          })) as unknown as PG[];
+          setPgs(pgsList);
+        } else {
+          console.error("University not found");
+        }
+      } catch (error) {
+        console.error("Error fetching university data: ", error);
+      }
+    };
+
+    fetchUniversityData();
+  }, [universityId]);
 
   useEffect(() => {
     const fetchPGs = async () => {
@@ -41,13 +82,17 @@ const page = ({ params }) => {
           const pgDocs = await getDocs(pgsCollection);
 
           pgDocs.forEach((pgDoc) => {
-            allPGs.push({ id: pgDoc.id, ...pgDoc.data() });
+            allPGs.push({
+              id: pgDoc.id,
+              universityId: universityDoc.id,
+              ...pgDoc.data(),
+            });
           });
         }
       );
 
       await Promise.all(fetchAllPGsPromises);
-      setPgs(allPGs); // Set PGs immediately after fetching
+      setPgs(allPGs);
     };
 
     fetchPGs();
@@ -143,23 +188,31 @@ const page = ({ params }) => {
           </h2>
           <hr className="h1-hr" />
         </div>
-        <div className="d-flex flex-column align-items-start gap-5 pt-5">
-          <div className="row">
-            {pgs.map((pg) => (
-              <div className="col-6 col-md-4" key={pg.id}>
-                <div className="card" style={{ width: "100%" }}>
-                  {/* Replace with your actual image URL if available */}
-                  {/* <img src={pg.imageUrl} className="card-img-top" alt={pg.name} style={{ height: "200px", objectFit: "cover" }} /> */}
-                  <div className="card-body">
-                    <h5 className="card-title">{pg.name}</h5>
-                    <p className="card-text">{pg.location}</p>
-                    <a href="/" className="btn-custom">
-                      Explore
-                    </a>
+        <div className="pt-5">
+          <div className="d-flex flex-column flex-md-row justify-content-center align-items-start gap-3">
+            {/* Column for the PG Cards */}
+            <div className="col-12 col-md-8">
+              <div className="row row-cols-1 row-cols-md-3 g-3">
+                {" "}
+                {/* Changed row-cols-md-2 to row-cols-md-3 */}
+                {pgs.map((pg) => (
+                  <div className="col" key={pg.id}>
+                    <div className="card h-100">
+                      <div className="card-body">
+                        <h5 className="card-title fw-bold">{pg.name}</h5>
+                        <p className="card-text">{pg.location}</p>
+                        <Link
+                          href={`/university/${pg.universityId}/${pg.id}`}
+                          passHref
+                        >
+                          <button className="btn btn-primary">Explore</button>
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
