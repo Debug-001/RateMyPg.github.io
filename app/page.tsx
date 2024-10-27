@@ -11,6 +11,7 @@ import pesu from "../assets/pesu.jpg";
 import rvce from "../assets/rvce.jpg";
 import { CgProfile } from "react-icons/cg";
 import { Fade } from "react-awesome-reveal";
+import SearchBar from "@/components/SearchBar";
 
 const page = () => {
   return (
@@ -18,55 +19,37 @@ const page = () => {
       <Navbar />
       {/* search bar section  */}
       <div
-        className="container-fluid top-section"
+      className="container-fluid top-section"
+      style={{
+        backgroundImage: `url('/bg.png')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        position: "relative",
+        height: "60vh",
+      }}
+    >
+      <div
         style={{
-          backgroundImage: `url('/bg.png')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "relative",
-          height: "60vh",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: 1,
         }}
+      />
+      <div
+        className="container p-5 d-flex flex-column justify-content-center align-items-center"
+        style={{ position: "relative", zIndex: 2 }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 1,
-          }}
-        />
-        <div
-          className="container p-5 d-flex flex-column justify-content-center align-items-center"
-          style={{ position: "relative", zIndex: 2 }}
-        >
-          <h1 className="display-4 pt-5 text-white fw-bolder">
-            Explore the world of <span className="text-info">PG's </span>
-            and <span className="text-warning">Dorms </span>near your University
-          </h1>
-          <div className="input-group pt-4 mb-3 w-75">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Hit up your University name..."
-              aria-label="search"
-              aria-describedby="button-addon2"
-            />
-            <button
-              className="btn btn-secondary"
-              type="button"
-              id="button-addon2"
-            >
-              Search
-            </button>
-          </div>
-          <Link href="/university">
-            <p className="search-bar-text text-white">All Universities</p>
-          </Link>
-        </div>
+        <h1 className="display-4 pt-5 text-white fw-bolder">
+          Explore the world of <span className="text-info">PG's </span>
+          and <span className="text-warning">Dorms </span>near your University
+        </h1>
+        <SearchBar/>
       </div>
+    </div>
       {/* dorm intro section  */}
       <div className="container-fluid mid-section p-5 mt-4">
         <div className="row  d-flex  justify-content-center align-items-center pb-5">

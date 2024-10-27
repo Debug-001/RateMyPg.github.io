@@ -16,7 +16,7 @@
   background-color: rgb(245, 242, 239) !important;
 }
 
-.mid-section{
+.mid-section {
   background: url(https://static1.hkrtcdn.com/mbnext/static/media/common/best-selling-desktop-be.svg);
   background-size: cover;
   background-repeat: no-repeat;
@@ -71,7 +71,7 @@
   color: #000;
 }
 
-.btn-photo{
+.btn-photo {
   color: black;
   background-color: whitesmoke;
   border: 2px solid white;
@@ -93,15 +93,25 @@
   background-color: #3d3d3d;
   border: 2px solid #3d3d3d;
   color: #fff;
-  transition: all .1s ease-in-out;
+  transition: all 0.1s ease-in-out;
 }
 
-.search-bar-text:hover{
-    color: rgb(0, 170, 255) !important;
-transition: all .2s ease-in-out !important;
+.search-bar-text:hover {
+  color: rgb(0, 170, 255) !important;
+  transition: all 0.2s ease-in-out !important;
 }
 
-.uni-name:hover{
-font-size: 22px !important;
-transition: all .2s;
+.uni-name:hover {
+  font-size: 22px !important;
+  transition: all 0.2s;
+}
+.search-results {
+  position: absolute;
+  z-index: 1000;
+  width: 75%; /* Match the width of the input */
+  max-height: 300px; /* Limit the height of the dropdown */
+  overflow-y: auto; /* Allow scrolling if there are too many results */
+  background: white; /* Ensure the dropdown has a background */
+  border: 1px solid #ccc; /* Optional border for better visibility */
+  border-radius: 0.25rem; /* Match Bootstrap button rounding */
 }
