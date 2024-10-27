@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import headlogo1 from "../assets/header-logo1.png";
 import headlogo2 from "../assets/header-logo2.png";
 import christ from "../assets/christ.jpg";
@@ -12,69 +12,117 @@ import rvce from "../assets/rvce.jpg";
 import { CgProfile } from "react-icons/cg";
 import { Fade } from "react-awesome-reveal";
 import SearchBar from "@/components/SearchBar";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/context/Firebase";
+import Button from "@/components/Button";
 
-const page = () => {
+interface PG {
+  id: string;
+  name: string;
+  location: string;
+  contact: string;
+}
+
+const page = ({ params }) => {
+  const [pgs, setPgs] = useState<PG[]>([]);
+
+  useEffect(() => {
+    const fetchPGs = async () => {
+      const universitiesCollection = collection(db, "universities");
+      const universityDocs = await getDocs(universitiesCollection);
+      const allPGs = [];
+
+      const fetchAllPGsPromises = universityDocs.docs.map(
+        async (universityDoc) => {
+          const pgsCollection = collection(
+            db,
+            `universities/${universityDoc.id}/pgs`
+          );
+          const pgDocs = await getDocs(pgsCollection);
+
+          pgDocs.forEach((pgDoc) => {
+            allPGs.push({ id: pgDoc.id, ...pgDoc.data() });
+          });
+        }
+      );
+
+      await Promise.all(fetchAllPGsPromises);
+      setPgs(allPGs); // Set PGs immediately after fetching
+    };
+
+    fetchPGs();
+  }, []);
+
   return (
     <>
       <Navbar />
       {/* search bar section  */}
       <div
-      className="container-fluid top-section"
-      style={{
-        backgroundImage: `url('/bg.png')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        position: "relative",
-        height: "60vh",
-      }}
-    >
-      <div
+        className="container-fluid top-section"
         style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          zIndex: 1,
+          backgroundImage: `url('/bg.png')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          height: "60vh",
         }}
-      />
-      <div
-        className="container p-5 d-flex flex-column justify-content-center align-items-center"
-        style={{ position: "relative", zIndex: 2 }}
       >
-        <h1 className="display-4 pt-5 text-white fw-bolder">
-          Explore the world of <span className="text-info">PG's </span>
-          and <span className="text-warning">Dorms </span>near your University
-        </h1>
-        <SearchBar/>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1,
+          }}
+        />
+        <div
+          className="container p-5 d-flex flex-column justify-content-center align-items-center"
+          style={{ position: "relative", zIndex: 2 }}
+        >
+          <h1 className="display-4 pt-5 text-white fw-bolder">
+            Explore the world of <span className="text-info">PG's </span>
+            and <span className="text-warning">Dorms </span>near your University
+          </h1>
+          <SearchBar />
+        </div>
       </div>
-    </div>
       {/* dorm intro section  */}
-      <div className="container-fluid mid-section p-5 mt-4">
-        <div className="row  d-flex  justify-content-center align-items-center pb-5">
-          <div className="col-6 col-md-4">
+      <div className="container-fluid mid-section p-4 p-md-5 mt-4">
+        <div className="row d-flex justify-content-center align-items-center pb-4">
+          <div className="col-12 col-md-6 col-lg-4 text-center text-md-start mb-4 mb-md-0">
             <Fade direction="right" triggerOnce>
               <h2 className="display-6 fw-bold">Find your University</h2>
               <p className="text-secondary fs-5">
-                We've collected Pg reviews from over 1500+ North/South Indian
-                Dorms. Search for your university to get started.
+                We've collected PG reviews from over 1500+ North/South Indian
+                dorms. Search for your university to get started.
               </p>
             </Fade>
           </div>
-          <div className="col-6 col-md-4">
-            {/* <Fade direction="left" triggerOnce> */}
-            <Image src={headlogo1} width={500} height={300} alt="header-img" />
-            {/* </Fade> */}
+          <div className="col-12 col-md-6 col-lg-4 text-center">
+            <Image
+              src={headlogo1}
+              width={400}
+              height={250}
+              alt="header-img"
+              className="img-fluid"
+            />
           </div>
         </div>
-        <div className="row pt-4  d-flex  justify-content-center align-items-center pb-5">
-          <div className="col-6 col-md-4 mx-5">
-            {/* <Fade direction="up" triggerOnce> */}
-            <Image src={headlogo2} width={400} height={300} alt="header-img" />
-            {/* </Fade> */}
+
+        <div className="row pt-4 d-flex justify-content-center align-items-center pb-4">
+          <div className="col-12 col-md-6 col-lg-4 text-center text-md-start mb-4 mb-md-0">
+            <Image
+              src={headlogo2}
+              width={400}
+              height={250}
+              alt="header-img"
+              className="img-fluid"
+            />
           </div>
-          <div className="col-6 col-md-4">
+          <div className="col-12 col-md-6 col-lg-4 text-center text-md-start">
             <Fade direction="left" triggerOnce>
               <h2 className="display-6 fw-bold">Anonymous PG Reviews</h2>
               <p className="text-secondary fs-5">
@@ -88,81 +136,34 @@ const page = () => {
       </div>
       {/* dorm browse section */}
       <div className="container-fluid mid-section pb-5 h-100 d-flex flex-column align-items-center">
-        <div className="text-container d-flex flex-column justify-content-center align-items-center">
-          <h2 className="display-5 fs-1 fw-bold text-center pt-5">
+        <div className="text-container d-flex flex-column justify-content-center align-items-center text-center">
+          <h2 className="display-5 fs-1 fw-bold pt-5">
             Browse the best <span className="text-primary">Student PG's</span>{" "}
             in your Area
           </h2>
           <hr className="h1-hr" />
         </div>
-        <div className="d-flex flex-column gap-5 pt-5">
+        <div className="d-flex flex-column align-items-start gap-5 pt-5">
           <div className="row">
-            <div className="col-6 col-md-4">
-              <div className="card" style={{ width: "18rem" }}>
-                {/* <Image
-                  src={`url(./pg2.png)`}
-                  className="card-img-top"
-                  alt="..."
-                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
-                /> */}
-                <div className="card-body">
-                  <h5 className="card-title">New-Slv Stays Luxury Pg</h5>
-                  <p className="card-text">
-                    22, Christ Ln, near Christ University, krishna nagar,
-                    Koramangala Industrial Layout, Koramangala, Bengaluru,
-                    Karnataka 560029
-                  </p>
-                  <a href="/" className="btn-custom">
-                    Explore
-                  </a>
+            {pgs.map((pg) => (
+              <div className="col-6 col-md-4" key={pg.id}>
+                <div className="card" style={{ width: "100%" }}>
+                  {/* Replace with your actual image URL if available */}
+                  {/* <img src={pg.imageUrl} className="card-img-top" alt={pg.name} style={{ height: "200px", objectFit: "cover" }} /> */}
+                  <div className="card-body">
+                    <h5 className="card-title">{pg.name}</h5>
+                    <p className="card-text">{pg.location}</p>
+                    <a href="/" className="btn-custom">
+                      Explore
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-6 col-md-4">
-              <div className="card" style={{ width: "18rem" }}>
-                {/* <Image
-                  src={`url(./pg2.png)`}
-                  alt="..."
-                  style={{ width: "100%", height: "225px", objectFit: "cover" }}
-                  width={100}
-                  height={225}
-                /> */}
-                <div className="card-body">
-                  <h5 className="card-title">
-                    Panchavati sri Anjeneya Luxury pg
-                  </h5>
-                  <p className="card-text">
-                    Veerabhadra Nagar, Banashankari 3rd Stage, Banashankari,
-                    Bengaluru, Karnataka 560085
-                  </p>
-                  <a href="#" className="btn btn-secondary">
-                    Explore
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="col-6 col-md-4">
-              <div className="card" style={{ width: "18rem" }}>
-                {/* <Image
-                  src={`url(./pg2.png)`}
-                  alt="..."
-                  style={{ width: "100%", height: "225px", objectFit: "cover" }}
-                /> */}
-                <div className="card-body">
-                  <h5 className="card-title">ROYAL LUXURY PG FOR GENTS</h5>
-                  <p className="card-text">
-                    4, 80 Feet Rd, 1st phase Girinagar, Phase 2, Banashankari
-                    1st Stage, Banashankari, Bengaluru, Karnataka 560085
-                  </p>
-                  <a href="#" className="btn btn-secondary">
-                    Explore
-                  </a>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
+
       {/* university browse section  */}
       <div className="container-fluid mid-section p-5 d-flex flex-column">
         <div className="text-container d-flex flex-column justify-content-center align-items-center">

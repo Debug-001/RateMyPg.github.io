@@ -12,7 +12,6 @@ import {
 } from "firebase/firestore";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
-import { TbPhotoPlus } from "react-icons/tb";
 import NavAddress from "@/components/NavAddress";
 import { useAuth } from "@/context/AuthContext";
 import { CiLocationOn } from "react-icons/ci";

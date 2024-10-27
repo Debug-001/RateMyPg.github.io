@@ -9,47 +9,36 @@ import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import toast, { Toaster } from "react-hot-toast";
 
-
 export const Navbar = () => {
   const router = useRouter();
   const { user } = useAuth();
+  
   const googleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
         router.replace("/");
-        toast.success('Logged in Succesfully')
+        toast.success("Logged in Successfully");
       }
     } catch (error) {
       console.error("Error during Google login:", error);
-      toast.error('Log In failed')
+      toast.error("Log In failed");
     }
   };
 
-  function logout(){
-    toast.success('Log Out Success')
-  }
+  const logout = () => {
+    auth.signOut();
+    toast.success("Log Out Success");
+  };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-white">
+    <nav className="navbar navbar-expand-lg bg-white shadow">
       <div className="container-fluid">
-        <Image
-          src={logo}
-          alt="logo"
-          className="logo-img"
-          width={45}
-          height={45}
-        />
-        <li className="nav-item px-4 d-flex flex-column justify-content-center align-items-center">
-          <a
-            className="nav-link active fs-2 fw-bolder d-none d-md-block d-lg-block"
-            aria-current="page"
-            href="/"
-          >
-            R a t e My <span className="text-primary">Pg.com</span>
-          </a>
-        </li>
+        <Link href="/" className="navbar-brand d-flex align-items-center">
+          <Image src={logo} alt="logo" width={45} height={45} />
+          <span className="ms-2 fs-4 fw-bold">Rate My <span className="text-primary">Pg.com</span></span>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -61,41 +50,41 @@ export const Navbar = () => {
         >
           <span className="navbar-toggler-icon" />
         </button>
-        <div
-          className="collapse navbar-collapse d-flex justify-content-between align-items-center"
-          id="navbarNav"
-        >
-          <ul className="navbar-nav d-flex justify-content-center gap-4 fs-5">
-            <li className="nav-item hover-underline-animation">
-              <Link href="/forums" className="text-black nav-link">
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center gap-3">
+            <li className="nav-item">
+              <Link href="/forums" className="nav-link text-black fs-5 hover-underline-animation">
                 Forums
               </Link>
             </li>
-            <li className="nav-item hover-underline-animation">
-              <Link href="/university" className="text-black nav-link">
+            <li className="nav-item">
+              <Link href="/university" className="nav-link text-black fs-5 hover-underline-animation">
                 Pg's
               </Link>
             </li>
-            <li className="nav-item hover-underline-animation">
-              <Link href="/gc" className="text-black nav-link">
+            <li className="nav-item">
+              <Link href="/gc" className="nav-link text-black fs-5 hover-underline-animation">
                 Global Chat
               </Link>
             </li>
-            <li className="nav-item hover-underline-animation">
-              <Link href="/adduni" className="text-black nav-link">
+            <li className="nav-item">
+              <Link href="/adduni" className="nav-link text-black fs-5 hover-underline-animation">
                 Add University
               </Link>
             </li>
-            <li className="nav-item hover-underline-animation">
-              <Link href="/aboutus" className="text-black nav-link">
+            <li className="nav-item">
+              <Link href="/aboutus" className="nav-link text-black fs-5 hover-underline-animation">
                 About Us
               </Link>
             </li>
           </ul>
 
           {!user ? (
-             <button className="btn-custom d-flex align-items-center m-2 gap-1" onClick={googleLogin}>
-             <FcGoogle size={20}/>Sign In with Google
+            <button
+              className="btn-custom btn d-flex align-items-center m-2 gap-1"
+              onClick={googleLogin}
+            >
+              <FcGoogle size={20} /> Sign In with Google
             </button>
           ) : (
             <div className="dropdown">
@@ -116,12 +105,9 @@ export const Navbar = () => {
                     Profile
                   </button>
                 </li>
-                <div className="dropdown-divider"/>
+                <div className="dropdown-divider" />
                 <li>
-                  <button
-                    className="dropdown-item"
-                    onClick={() => auth.signOut() && logout()}
-                  >
+                  <button className="dropdown-item" onClick={logout}>
                     Logout
                   </button>
                 </li>
@@ -130,7 +116,7 @@ export const Navbar = () => {
           )}
         </div>
       </div>
-      <Toaster/>
+      <Toaster />
     </nav>
   );
 };
