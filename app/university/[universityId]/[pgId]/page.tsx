@@ -273,18 +273,49 @@ const PgDetailsPage = ({ params }) => {
         </div>
         <div className="card mb-3">
           <div className="card-body">
-            <h5 className="card-title fs-2"> {pg?.name || "PG Not Found"}</h5>
+            {pg?.imageUrl ? (
+              <img
+                src={pg.imageUrl}
+                alt={pg.name}
+                className="card-img-top"
+                style={{
+                  height: "200px",
+                  width: "100%",
+                  objectFit: "cover", // Ensures uniform image size across cards
+                }}
+              />
+            ) : (
+              <div
+                className="card-img-top placeholder"
+                style={{
+                  height: "200px",
+                  width: "100%",
+                  backgroundColor: "#f0f0f0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <span>No Image Available</span>
+              </div>
+            )}
+
+            <h5 className="card-title fs-2">{pg?.name || "PG Not Found"}</h5>
             <p className="card-text">
               <small className="text-muted">
                 <CiLocationOn size={22} /> {pg.location || "Not provided"}
               </small>
             </p>
           </div>
+
           <ul className="list-group list-group-flush">
             <li className="list-group-item">{pg.contact || "Not provided"}</li>
           </ul>
+
           <div className="card-body">
             <h2 className="fs-3">Reviews:</h2>
+
+            {/* Add Comment Section */}
             <div className="mb-3 d-flex gap-2 align-items-center">
               <Image
                 src={user.photoURL}
@@ -307,6 +338,8 @@ const PgDetailsPage = ({ params }) => {
                 Submit
               </button>
             </div>
+
+            {/* Display Comments and Replies */}
             {comments.map((comment) => (
               <div key={comment.id} className="mb-3">
                 <div className="d-flex gap-2 align-items-center">
@@ -338,6 +371,8 @@ const PgDetailsPage = ({ params }) => {
                     Reply
                   </button>
                 </div>
+
+                {/* Reply Input Field */}
                 {activeReply === comment.id && (
                   <div className="mt-2 d-flex gap-2">
                     <Image
@@ -362,6 +397,8 @@ const PgDetailsPage = ({ params }) => {
                     </button>
                   </div>
                 )}
+
+                {/* Display Replies */}
                 {comment.replies.map((reply) => (
                   <div key={reply.id} className="mt-2 ms-4">
                     <div className="d-flex gap-2 align-items-center">
@@ -391,6 +428,7 @@ const PgDetailsPage = ({ params }) => {
             ))}
           </div>
         </div>
+
         <Toaster />
       </div>
       <Footer />

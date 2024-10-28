@@ -6,6 +6,8 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import Link from "next/link";
 import NavAddress from "@/components/NavAddress";
+import { CiLocationOn } from "react-icons/ci";
+import Button from "@/components/Button";
 
 interface University {
   id: string;
@@ -14,6 +16,7 @@ interface University {
 }
 
 interface PG {
+  imageUrl: any;
   id: string;
   name: string;
   location: string;
@@ -56,7 +59,7 @@ const UniversityDetailsPage = ({ params }) => {
 
     fetchUniversityData();
   }, [universityId]);
-  
+
   return (
     <>
       <Navbar />
@@ -91,9 +94,9 @@ const UniversityDetailsPage = ({ params }) => {
             </h1>
           </div>
         </div>
-        <div className="container">
-          <NavAddress/>
-          <div className="text-container d-flex flex-column ">
+        <div className="container pb-5">
+          <NavAddress />
+          <div className="text-container  d-flex flex-column ">
             <h1 className="fs-1 fw-bold  mt-5">
               Browse Pg's and Unfiltered
               <span className="text-primary"> Reviews</span>
@@ -107,49 +110,70 @@ const UniversityDetailsPage = ({ params }) => {
               <div className="row">
                 {pgs.map((pg) => (
                   <div key={pg.id} className="col-6 col-md-4 mb-4">
-                    <div className="card shadow p-2" style={{ width: "100%" }}>
-                      {/* <img
-                        src={
-                          pg.images && pg.images.length > 0
-                            ? pg.images[0]
-                            : "https://via.placeholder.com/150"
-                        } 
-                        className="card-img-top"
-                        alt={`Image for ${pg.name || "No Name Provided"}`}
-                        style={{ height: "200px", objectFit: "cover" }}
-                      /> */}
-                      <div className="card-body">
-                        <h5 className="card-title">
-                          {pg.name || "No Name Provided"}
-                        </h5>
-                        {/* {pg.images && pg.images.length > 0 ? (
-                          <div className="image-gallery">
-                            {pg.images.map((imageUrl, index) => (
-                              <img
-                                key={index}
-                                src={imageUrl}
-                                alt={`Image for ${pg.name}`}
-                                style={{
-                                  maxWidth: "100px",
-                                  height: "auto",
-                                  marginRight: "10px",
-                                  borderRadius: "5px",
-                                }}
-                              />
-                            ))}
-                          </div>
-                        ) : (
-                          <p>No images available</p>
-                        )} */}
-                        <p className="card-text">
-                          {/* Add a description or address here if available */}
-                          Address: {pg.contact || "No Address Provided"}
-                        </p>
-                        <Link
-                          href={`/university/${universityId}/${pg.id}`}
-                          className="btn-custom"
+                    <div
+                      className="card shadow p-2"
+                      style={{
+                        width: "100%",
+                        height: "400px", // Increased card height for more content space
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {pg?.imageUrl ? (
+                        <img
+                          src={pg.imageUrl}
+                          alt={pg.name}
+                          className="card-img-top"
+                          style={{
+                            height: "200px", // Fixed image height for uniformity
+                            width: "100%",
+                            objectFit: "cover",
+                            borderRadius:"10px"
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className="card-img-top placeholder"
+                          style={{
+                            height: "200px",
+                            width: "100%",
+                            backgroundColor: "#f0f0f0",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius:"10px"
+                          }}
                         >
-                          Explore
+                          <span>No Image Available</span>
+                        </div>
+                      )}
+                      <div
+                        className="card-body"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          flexGrow: 1,
+                        }}
+                      >
+                        <h5
+                          className="card-title fs-3"
+                          style={{ marginBottom: "0.5rem" }}
+                        >
+                          {pg?.name || "PG Not Found"}
+                        </h5>
+                        <p className="card-text">
+                          <small className="text-muted">
+                            <CiLocationOn size={22} />{" "}
+                            {pg.location || "Not provided"}
+                          </small>
+                        </p>
+                        <Link href={`/university/${universityId}/${pg.id}`}>
+                          <Button
+                            className="btn-custom px-3 mt-2"
+                            text="Explore"
+                          />
                         </Link>
                       </div>
                     </div>

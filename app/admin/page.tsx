@@ -13,9 +13,12 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const AdminPage = () => {
-  const { user, loading } = useAuth(); // Get user and loading state from auth context
+  const [pgImage, setPgImage] = useState(null);
+
+  const { user, loading } = useAuth();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   const [universityName, setUniversityName] = useState("");
@@ -100,8 +103,14 @@ const AdminPage = () => {
     }
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setPgImage(e.target.files[0]);
+    }
+  };
+
   const handleAddPg = async () => {
-    if (pgName && pgLocation && pgContact && selectedUniversityId) {
+    if (pgName && pgLocation && pgContact && selectedUniversityId && pgImage) {
       try {
         const exists = await checkPgExists(selectedUniversityId, pgName);
         if (exists) {
@@ -109,24 +118,38 @@ const AdminPage = () => {
           return;
         }
 
+        // Upload image to Firebase Storage
+        const storage = getStorage();
+        const storageRef = ref(
+          storage,
+          `pg-images/${selectedUniversityId}-${pgName}-${pgImage.name}`
+        );
+        await uploadBytes(storageRef, pgImage);
+
+        // Get download URL for the uploaded image
+        const imageUrl = await getDownloadURL(storageRef);
+
         const universityRef = doc(db, "universities", selectedUniversityId);
         await addDoc(collection(universityRef, "pgs"), {
           name: pgName,
           location: pgLocation,
           contact: pgContact,
+          imageUrl, // Save the image URL in Firestore
         });
 
+        // Reset form fields
         setPgName("");
         setPgLocation("");
         setPgContact("");
         setSelectedUniversityId("");
+        setPgImage(null); // Reset image field
         notifySuccess();
       } catch (error) {
         notifyError();
         console.error("Error adding PG: ", error);
       }
     } else {
-      toast.error("Please fill in all fields for the PG.");
+      toast.error("Please fill in all fields for the PG, including an image.");
     }
   };
 
@@ -245,6 +268,13 @@ const AdminPage = () => {
                   aria-label="PG Owner"
                 />
               </div>
+              <div className="input-group">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
               <button
                 onClick={handleAddPg}
                 className="btn-custom w-25 text-white p-2 rounded"
@@ -262,3 +292,10 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+function setImageUrl(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
+function setImage(arg0: null) {
+  throw new Error("Function not implemented.");
+}
