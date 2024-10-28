@@ -1,7 +1,9 @@
 'use client';
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { auth } from './Firebase'; 
+import { auth } from './Firebase';
+import { setPersistence, browserSessionPersistence } from 'firebase/auth';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 interface User {
     photoURL: string | StaticImport;
@@ -22,15 +24,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user) {
-                setUser(user as User);
-            } else {
-                setUser(null);
-            }
-            setLoading(false);
-        });
-        return () => unsubscribe();
+        // Set session persistence for the current tab
+        setPersistence(auth, browserSessionPersistence)
+            .then(() => {
+                // Once persistence is set, add the auth state listener
+                const unsubscribe = auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        setUser(user as User);
+                    } else {
+                        setUser(null);
+                    }
+                    setLoading(false);
+                });
+                return unsubscribe;
+            })
+            .catch((error) => {
+                console.error("Failed to set persistence:", error);
+                setLoading(false);
+            });
     }, []);
 
     return (
