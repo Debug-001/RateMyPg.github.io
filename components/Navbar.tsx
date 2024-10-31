@@ -53,13 +53,13 @@ export const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center gap-3">
             <li className="nav-item">
-              <Link href="/forums" className="nav-link text-black fs-5 hover-underline-animation">
-                Forums
+              <Link href="/university" className="nav-link text-black fs-5 hover-underline-animation">
+                Student Pg
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/university" className="nav-link text-black fs-5 hover-underline-animation">
-                Pg's
+              <Link href="/forums" className="nav-link text-black fs-5 hover-underline-animation">
+                Forums
               </Link>
             </li>
             <li className="nav-item">
@@ -69,7 +69,7 @@ export const Navbar = () => {
             </li>
             <li className="nav-item">
               <Link href="/adduni" className="nav-link text-black fs-5 hover-underline-animation">
-                Add University
+                 University
               </Link>
             </li>
             <li className="nav-item">
@@ -81,10 +81,10 @@ export const Navbar = () => {
 
           {!user ? (
             <button
-              className="btn-custom d-flex align-items-center m-2 gap-1"
+              className="btn-custom  d-flex align-items-center m-2 gap-1"
               onClick={googleLogin}
             >
-              <FcGoogle size={20} /> Sign In with Google
+              <FcGoogle className="mx-1" size={20} /> Sign In
             </button>
           ) : (
             <div className="dropdown">
