@@ -115,3 +115,13 @@
   border: 1px solid #ccc; /* Optional border for better visibility */
   border-radius: 0.25rem; /* Match Bootstrap button rounding */
 }
+
+.icon-like{
+  color: black;
+}
+
+
+.icon-liked{
+  color: red;
+}
+

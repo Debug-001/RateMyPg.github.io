@@ -14,7 +14,31 @@ import { Fade } from "react-awesome-reveal";
 import SearchBar from "@/components/SearchBar";
 import { db } from "@/context/Firebase";
 import Button from "@/components/Button";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  limit,
+  query,
+  orderBy,
+  updateDoc,
+} from "firebase/firestore";
+import { FaQuestionCircle } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
+import { IoMdHeartEmpty } from "react-icons/io";
+
+interface ForumPost {
+  id: string;
+  title: string;
+  content: string;
+  userId: string;
+  displayName: string;
+  profileImage: string;
+  university: string;
+  likes: string[];
+}
 
 interface University {
   id: string;
@@ -30,9 +54,12 @@ interface PG {
 }
 
 const page = ({ params }) => {
+  const { user, loading: authLoading } = useAuth();
+  const [topPosts, setTopPosts] = useState([]);
   const [pgs, setPgs] = useState<PG[]>([]);
   const [university, setUniversity] = useState<University | null>(null);
   const { universityId } = params;
+  const [posts, setPosts] = useState<ForumPost[]>([]);
 
   useEffect(() => {
     const fetchUniversityData = async () => {
@@ -68,6 +95,25 @@ const page = ({ params }) => {
   }, [universityId]);
 
   useEffect(() => {
+    const fetchTopPosts = async () => {
+      try {
+        const postsRef = collection(db, "posts");
+        const q = query(postsRef, orderBy("likes", "desc"), limit(4));
+        const querySnapshot = await getDocs(q);
+        const posts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTopPosts(posts);
+      } catch (error) {
+        console.error("Error fetching top posts: ", error);
+      }
+    };
+
+    fetchTopPosts();
+  }, []);
+
+  useEffect(() => {
     const fetchPGs = async () => {
       const universitiesCollection = collection(db, "universities");
       const universityDocs = await getDocs(universitiesCollection);
@@ -98,6 +144,35 @@ const page = ({ params }) => {
     fetchPGs();
   }, []);
 
+  const checkUserAuthenticated = () => {
+    if (!user) {
+      toast.error("Please sign in first.");
+      return false;
+    }
+    return true;
+  };
+
+  const handlePostLike = async (postId: string) => {
+    if (!checkUserAuthenticated()) return;
+
+    const postRef = doc(db, "posts", postId);
+    const selectedPost = posts.find((post) => post.id === postId);
+    const isLiked = selectedPost?.likes.includes(user.uid);
+    const updatedLikes = isLiked
+      ? selectedPost?.likes.filter((id) => id !== user.uid)
+      : [...(selectedPost?.likes || []), user.uid];
+
+    try {
+      await updateDoc(postRef, { likes: updatedLikes });
+      if (user) {
+        toast.success(isLiked ? "Like removed" : "Liked!");
+      } else {
+        toast.error("Login First");
+      }
+    } catch (error) {
+      console.error("Error updating like:", error);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -335,129 +410,81 @@ const page = ({ params }) => {
       {/* student forums q/a */}
       <div className="container pt-5 pb-5">
         <div className="text-container d-flex flex-column justify-content-center align-items-center">
-          <h1 className="fs-1 fw-bold  mt-5 text-center">
-            Live from the Student
-            <span className="text-primary"> Forums</span>
+          <h1 className="fs-1 fw-bold mt-5 text-center">
+            Live from <span className="text-primary">Student Forums</span>
           </h1>
           <hr className="h1-hr" />
         </div>
-        <div
-          className="accordion pt-5 d-flex flex-column gap-5"
-          id="accordionPanelsStayOpenExample"
-        >
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button fs-5"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseOne"
-                aria-expanded="true"
-                aria-controls="collapseOne"
-              >
-                Worst Pg's to stay away from Near PES RR campus
-              </button>
-            </h2>
-            <div
-              id="collapseOne"
-              className="accordion-collapse collapse show"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <div className="d-flex gap-3 pb-3">
-                  <CgProfile size={25} />
-                  <h3 className="fs-4">XYZ Kumar</h3>
+        <div className="row pt-3">
+          {topPosts.length > 0 ? (
+            <div className="accordion w-100" id="accordionExample">
+              {topPosts.map((post, index) => (
+                <div
+                  key={post.id}
+                  className="accordion-item shadow rounded mt-5"
+                >
+                  <h2 className="accordion-header" id={`heading${index}`}>
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target={`#collapse${index}`}
+                      aria-expanded="true"
+                      aria-controls={`collapse${index}`}
+                    >
+                      <img
+                        src={post.profileImage}
+                        alt={post.displayName}
+                        className="rounded-circle"
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      {post.title}
+                    </button>
+                  </h2>
+                  <div
+                    id={`collapse${index}`}
+                    className="accordion-collapse collapse"
+                    aria-labelledby={`heading${index}`}
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      <p className="bg-dark p-3 rounded text-white">
+                        {post.content || "No content available."}
+                      </p>
+                      <div className="d-flex justify-content-end align-items-center flex-row gap-2">
+                        <span
+                          onClick={() => handlePostLike(post.id)}
+                          className={`icon-container me-2`}
+                        >
+                          <IoMdHeartEmpty size={25}
+                            className={`icon ${
+                              post.likes.includes(user?.uid)
+                                ? "icons-like"
+                                : "icons-liked"
+                            }`}
+                          />
+                          {post.likes.length}
+                        </span>
+
+                        <Link href="/forums">
+                          <button className="btn btn-primary">Read More</button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <strong>This is the first item's accordion body.</strong> It is
-                shown by default, until the collapse plugin adds the appropriate
-                classes that we use to style each element. These classes control
-                the overall appearance, as well as the showing and hiding via
-                CSS transitions. You can modify any of this with custom CSS or
-                overriding our default variables. It's also worth noting that
-                just about any HTML can go within the{" "}
-                <code>.accordion-body</code>, though the transition does limit
-                overflow.
-              </div>
+              ))}
             </div>
-          </div>
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button collapsed fs-5"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseTwo"
-                aria-expanded="false"
-                aria-controls="collapseTwo"
-              >
-                Best Freshman Pg's near Christ Central Campus
-              </button>
-            </h2>
-            <div
-              id="collapseTwo"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <strong>This is the second item's accordion body.</strong> It is
-                hidden by default, until the collapse plugin adds the
-                appropriate classes that we use to style each element. These
-                classes control the overall appearance, as well as the showing
-                and hiding via CSS transitions. You can modify any of this with
-                custom CSS or overriding our default variables. It's also worth
-                noting that just about any HTML can go within the{" "}
-                <code>.accordion-body</code>, though the transition does limit
-                overflow.
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button collapsed fs-5"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseThree"
-                aria-expanded="false"
-                aria-controls="collapseThree"
-              >
-                Best Freshman PG's near PESU EC Campus?
-              </button>
-            </h2>
-            <div id="collapseThree" className="accordion-collapse collapse">
-              <div className="accordion-body">
-                <strong>This is the third item's accordion body.</strong> It is
-                hidden by default, until the collapse plugin adds the
-                appropriate classes that we use to style each element. These
-                classes control the overall appearance, as well as the showing
-                and hiding via CSS transitions. You can modify any of this with
-                custom CSS or overriding our default variables.
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button collapsed fs-5"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseFour"
-                aria-expanded="false"
-                aria-controls="collapseFour"
-              >
-                Stay Away from Panchavati PG near PESU RR Campus.
-              </button>
-            </h2>
-            <div id="collapseFour" className="accordion-collapse collapse">
-              <div className="accordion-body">
-                <strong>This is the fourth item's accordion body.</strong> It is
-                hidden by default, until the collapse plugin adds the
-                appropriate classes that we use to style each element.
-              </div>
-            </div>
-          </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
+
       <Footer />
     </>
   );
