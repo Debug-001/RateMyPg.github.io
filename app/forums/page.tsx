@@ -23,6 +23,7 @@ import { TiLocationArrow } from "react-icons/ti";
 import { TiLocationArrowOutline } from "react-icons/ti";
 import { RiSearchEyeLine } from "react-icons/ri";
 import { RiSearchEyeFill } from "react-icons/ri";
+import { CiCirclePlus } from "react-icons/ci";
 
 interface Reply {
   userId: string;
@@ -70,7 +71,6 @@ const ForumPage: React.FC = () => {
         } as ForumPost;
       });
 
-      // Sort posts by number of replies first, then by timestamp
       postsData.sort((a, b) => {
         if (b.replies.length !== a.replies.length) {
           return b.replies.length - a.replies.length;
@@ -92,7 +92,9 @@ const ForumPage: React.FC = () => {
     return true;
   };
 
-  const [isActive, setIsActive] = useState(false);
+  const [isHomeActive, setIsHomeActive] = useState(false);
+  const [isPopularActive, setIsPopularActive] = useState(false);
+  const [isExploreActive, setIsExploreActive] = useState(false);
 
   const handlePostLike = async (postId: string) => {
     if (!checkUserAuthenticated()) return;
@@ -216,32 +218,128 @@ const ForumPage: React.FC = () => {
     }
   };
 
+  const getActiveClass = (isActive: any) =>
+    isActive ? "bg-secondary text-white" : "text-dark";
+
   return (
     <>
       <Toaster />
       <Navbar />
-      <div className="container p-4">
+      <div className="container-fluid p-4">
         <div className="row pt-5">
-          <div className="col-md-6 col-lg-3">
+          <div className="col-md-4 col-lg-3 mx-4">
             <div className="card mb-4 shadow" style={{ width: "100%" }}>
               <ul className="list-group list-group-flush">
-                
+                <div
+                  className="gap-4 p-3 d-flex flex-column align-items-start"
+                  style={{ cursor: "pointer" }}
+                >
+                  <div
+                    onClick={() => setIsHomeActive(!isHomeActive)}
+                    onMouseEnter={() => setIsHomeActive(true)}
+                    onMouseLeave={() => setIsHomeActive(false)}
+                    className={`px-3 py-2 d-flex align-items-center gap-2 rounded ${getActiveClass(
+                      isHomeActive
+                    )}`}
+                    style={{ width: "200px" }}
+                  >
+                    <Link
+                      href="/"
+                      className="d-flex align-items-center gap-2 w-100"
+                      style={{ color: isHomeActive ? "white" : "black" }}
+                    >
+                      {isHomeActive ? (
+                        <IoHome size={21} />
+                      ) : (
+                        <IoHomeOutline size={21} />
+                      )}
+                      <span className="d-none d-md-block fs-5">Home</span>
+                    </Link>
+                  </div>
+
+                  <div
+                    onClick={() => setIsPopularActive(!isPopularActive)}
+                    onMouseEnter={() => setIsPopularActive(true)}
+                    onMouseLeave={() => setIsPopularActive(false)}
+                    className={`px-3 py-2 d-flex align-items-center gap-2 rounded ${getActiveClass(
+                      isPopularActive
+                    )}`}
+                    style={{ width: "200px" }} // Same fixed width
+                  >
+                    <Link
+                      href="/"
+                      className="d-flex align-items-center gap-2 w-100"
+                      style={{ color: isPopularActive ? "white" : "black" }}
+                    >
+                      {isPopularActive ? (
+                        <TiLocationArrow size={25} />
+                      ) : (
+                        <TiLocationArrowOutline size={25} />
+                      )}
+                      <span className="d-none d-md-block fs-5">Popular</span>
+                    </Link>
+                  </div>
+
+                  <div
+                    onClick={() => setIsExploreActive(!isExploreActive)}
+                    onMouseEnter={() => setIsExploreActive(true)}
+                    onMouseLeave={() => setIsExploreActive(false)}
+                    className={`px-3 py-2 d-flex align-items-center gap-2 rounded ${getActiveClass(
+                      isExploreActive
+                    )}`}
+                    style={{ width: "200px" }} // Same fixed width
+                  >
+                    <Link
+                      href="/"
+                      className="d-flex align-items-center gap-2 w-100"
+                      style={{ color: isExploreActive ? "white" : "black" }}
+                    >
+                      {isExploreActive ? (
+                        <RiSearchEyeFill size={24} />
+                      ) : (
+                        <RiSearchEyeLine size={24} />
+                      )}
+                      <span className="d-none d-md-block fs-5">Explore</span>
+                    </Link>
+                  </div>
+                </div>
               </ul>
               <div className="card-body">
-                <h2 className="card-title display-6 fs-3 fw-bold">
-                  Discover what's the current hype
-                </h2>
-                <button
-                  type="button"
-                  className="p-2 rounded mt-2 btn-custom"
-                  data-bs-toggle="modal"
-                  data-bs-target="#createPostModal"
-                >
-                  Create Post
-                </button>
+                <div className="accordion" id="accordionExample">
+                  <div className="accordion-item">
+                    <h2 className="accordion-header">
+                      <button
+                        className="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="true"
+                        aria-controls="collapseOne"
+                      >
+                        Create a Post
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseOne"
+                      className="accordion-collapse collapse show"
+                      data-bs-parent="#accordionExample"
+                    >
+                      <div className="accordion-body">
+                        <button
+                          type="button"
+                          className="d-flex gap-2 align-items-center rounded mt-2 btn-custom"
+                          data-bs-toggle="modal"
+                          data-bs-target="#createPostModal"
+                        >
+                        <CiCirclePlus size={23}/>  Add your Post
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <ul className="list-group list-group-flush">
-                <h2 className="fs-4 mx-3 mt-3">Latest posts:</h2>
+                <h2 className="fs-4 p-2 mx-3 mt-3">Communities:</h2>
                 {posts.slice(0, 3).map((post) => (
                   <li
                     key={post.id}
@@ -284,7 +382,7 @@ const ForumPage: React.FC = () => {
                 <div className="modal-content">
                   <div className="modal-header">
                     <h1 className="modal-title fs-5" id="createPostModalLabel">
-                      Create Post
+                      Create your Post
                     </h1>
                     <button
                       type="button"
@@ -330,8 +428,8 @@ const ForumPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-9 col-lg-8 shadow pt-3 px-4 rounded">
-            <h2 className="mb-4 fw-bold">Student Forum's</h2>
+          <div className="col-md-9 col-lg-8 mx-2 shadow pt-3 p-4 px-4 rounded">
+            <h2 className="mb-4  fw-bold">Student Forum's</h2>
             {loadingPosts ? (
               <div>Loading...</div>
             ) : posts.length === 0 ? (

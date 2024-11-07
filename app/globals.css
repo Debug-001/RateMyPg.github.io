@@ -116,8 +116,6 @@
   border-radius: 0.25rem; /* Match Bootstrap button rounding */
 }
 
-.icon-like{
-  color: red
+.icons-list{
+  color: black !important;
 }
-
-
