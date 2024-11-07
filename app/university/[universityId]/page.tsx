@@ -9,6 +9,7 @@ import NavAddress from "@/components/NavAddress";
 import { CiLocationOn } from "react-icons/ci";
 import Button from "@/components/Button";
 
+
 interface University {
   id: string;
   name: string;
@@ -27,6 +28,7 @@ const UniversityDetailsPage = ({ params }) => {
   const [university, setUniversity] = useState<University | null>(null);
   const [pgs, setPgs] = useState<PG[]>([]);
   const { universityId } = params;
+  const { reviewId } = params;
 
   useEffect(() => {
     const fetchUniversityData = async () => {
@@ -126,7 +128,7 @@ const UniversityDetailsPage = ({ params }) => {
                           alt={pg.name}
                           className="card-img-top"
                           style={{
-                            height: "200px", // Fixed image height for uniformity
+                            height: "200px", 
                             width: "100%",
                             objectFit: "cover",
                             borderRadius:"10px"
@@ -169,12 +171,20 @@ const UniversityDetailsPage = ({ params }) => {
                             {pg.location || "Not provided"}
                           </small>
                         </p>
+                        <div className="d-flex flex-row gap-3 ">
                         <Link href={`/university/${universityId}/${pg.id}`}>
                           <Button
                             className="btn-custom px-3 mt-2"
                             text="Explore"
                           />
                         </Link>
+                        {/* <Link href={`/university/${universityId}/${reviewId}`}>
+                          <Button
+                            className="btn btn-custom px-3 mt-2"
+                            text="Rate"
+                          />
+                        </Link> */}
+                        </div>
                       </div>
                     </div>
                   </div>

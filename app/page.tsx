@@ -9,11 +9,9 @@ import headlogo2 from "../assets/header-logo2.png";
 import christ from "../assets/christ.jpg";
 import pesu from "../assets/pesu.jpg";
 import rvce from "../assets/rvce.jpg";
-import { CgProfile } from "react-icons/cg";
 import { Fade } from "react-awesome-reveal";
 import SearchBar from "@/components/SearchBar";
 import { db } from "@/context/Firebase";
-import Button from "@/components/Button";
 import {
   doc,
   getDoc,
@@ -24,7 +22,6 @@ import {
   orderBy,
   updateDoc,
 } from "firebase/firestore";
-import { FaQuestionCircle } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 import { IoMdHeartEmpty } from "react-icons/io";
@@ -61,38 +58,46 @@ const page = ({ params }) => {
   const { universityId } = params;
   const [posts, setPosts] = useState<ForumPost[]>([]);
 
-  useEffect(() => {
-    const fetchUniversityData = async () => {
-      if (!universityId) return;
+useEffect(() => {
+  const fetchUniversityData = async () => {
+    if (!universityId) return;
 
-      try {
-        const universityDoc = doc(db, "universities", universityId);
-        const universitySnapshot = await getDoc(universityDoc);
+    try {
+      const universityDoc = doc(db, "universities", universityId);
+      const universitySnapshot = await getDoc(universityDoc);
 
-        if (universitySnapshot.exists()) {
-          setUniversity({
-            id: universitySnapshot.id,
-            ...universitySnapshot.data(),
-          } as University);
+      if (universitySnapshot.exists()) {
+        setUniversity({
+          id: universitySnapshot.id,
+          ...universitySnapshot.data(),
+        } as University);
 
-          const pgsCollection = collection(universityDoc, "pgs");
-          const pgsSnapshot = await getDocs(pgsCollection);
-          const pgsList = pgsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            universityId,
-            ...doc.data(),
-          })) as unknown as PG[];
-          setPgs(pgsList);
-        } else {
-          console.error("University not found");
-        }
-      } catch (error) {
-        console.error("Error fetching university data: ", error);
+        // Limit to 6 PGs
+        const pgsCollection = collection(universityDoc, "pgs");
+        const pgsQuery = query(pgsCollection, limit(6));
+        const pgsSnapshot = await getDocs(pgsQuery);
+
+        // Log the number of PGs fetched to confirm the limit
+        console.log("Number of PGs fetched:", pgsSnapshot.docs.length);
+
+        const pgsList = pgsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          universityId,
+          ...doc.data(),
+        })) as unknown as PG[];
+
+        // Update state with the limited list
+        setPgs(pgsList);
+      } else {
+        console.error("University not found");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching university data: ", error);
+    }
+  };
 
-    fetchUniversityData();
-  }, [universityId]);
+  fetchUniversityData();
+}, [universityId]);
 
   useEffect(() => {
     const fetchTopPosts = async () => {
@@ -173,6 +178,7 @@ const page = ({ params }) => {
       console.error("Error updating like:", error);
     }
   };
+
   return (
     <>
       <Navbar />
@@ -452,20 +458,19 @@ const page = ({ params }) => {
                     data-bs-parent="#accordionExample"
                   >
                     <div className="accordion-body">
-                      <p className="bg-dark p-3 rounded text-white">
+                      <p className="bg-light p-3 rounded text-dark">
                         {post.content || "No content available."}
                       </p>
                       <div className="d-flex justify-content-end align-items-center flex-row gap-2">
-                        <span
-                          onClick={() => handlePostLike(post.id)}
-                          className={`icon-container me-2`}
-                        >
-                          <IoMdHeartEmpty size={25}
+                        <span className="icon-container me-2"  style={{ color: "red" }}>
+                          <IoMdHeartEmpty
+                            size={25}
                             className={`icon ${
                               post.likes.includes(user?.uid)
                                 ? "icons-like"
                                 : "icons-liked"
                             }`}
+                            style={{ color: "red" }} 
                           />
                           {post.likes.length}
                         </span>

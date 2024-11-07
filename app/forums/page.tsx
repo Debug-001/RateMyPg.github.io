@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { IoMdHeartEmpty } from "react-icons/io";
@@ -15,8 +15,8 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import { Toaster, toast } from "react-hot-toast";
+import { CgProfile } from "react-icons/cg";
 
-// Define types for forum posts and replies
 interface Reply {
   userId: string;
   displayName: string;
@@ -27,6 +27,7 @@ interface Reply {
 }
 
 interface ForumPost {
+  date: ReactNode;
   id: string;
   title: string;
   content: string;
@@ -215,12 +216,12 @@ const ForumPage: React.FC = () => {
           <div className="col-md-6 col-lg-3">
             <div className="card mb-4 shadow" style={{ width: "100%" }}>
               <div className="card-body">
-                <h2 className="card-title fs-3">
+                <h2 className="card-title display-6 fs-3 fw-bold">
                   Discover what's the current hype
                 </h2>
                 <button
                   type="button"
-                  className="p-2 rounded btn btn-secondary"
+                  className="p-2 rounded mt-2 btn-custom"
                   data-bs-toggle="modal"
                   data-bs-target="#createPostModal"
                 >
@@ -228,10 +229,33 @@ const ForumPage: React.FC = () => {
                 </button>
               </div>
               <ul className="list-group list-group-flush">
-                <h2 className="fs-4 p-3">Latest posts:</h2>
+                <h2 className="fs-4 mx-3 mt-3">Latest posts:</h2>
                 {posts.slice(0, 3).map((post) => (
-                  <li key={post.id} className="list-group-item">
-                    {post.title}
+                  <li
+                    key={post.id}
+                    className="list-group-item d-flex align-items-center gap-3 py-3 px-2 flex-wrap"
+                  >
+                    <div className="mx-2">
+                      <div className="d-flex align-items-start gap-2">
+                        <CgProfile
+                          size={24}
+                          className="text-secondary flex-shrink-0"
+                        />
+
+                        <div style={{ maxWidth: "100%" }}>
+                          <h6
+                            className="mb-1 fw-bold text-truncate"
+                            style={{ lineHeight: "1.2", maxWidth: "250px" }}
+                          >
+                            {post.title}
+                          </h6>
+                          <small className="text-muted">
+                            Posted on:{" "}
+                            {post.timestamp.toDate().toLocaleString()}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -262,7 +286,7 @@ const ForumPage: React.FC = () => {
                       className="form-control mb-2"
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
-                      placeholder="Enter heading or question"
+                      placeholder="Enter your Question...."
                     />
                     <textarea
                       className="form-control mb-2"
