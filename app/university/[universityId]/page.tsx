@@ -28,7 +28,7 @@ const UniversityDetailsPage = ({ params }) => {
   const [university, setUniversity] = useState<University | null>(null);
   const [pgs, setPgs] = useState<PG[]>([]);
   const { universityId } = params;
-  const { reviewId } = params;
+  // const { reviewId } = params;
 
   useEffect(() => {
     const fetchUniversityData = async () => {

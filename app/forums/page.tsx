@@ -16,6 +16,13 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { Toaster, toast } from "react-hot-toast";
 import { CgProfile } from "react-icons/cg";
+import { IoHome } from "react-icons/io5";
+import { IoHomeOutline } from "react-icons/io5";
+import Link from "next/link";
+import { TiLocationArrow } from "react-icons/ti";
+import { TiLocationArrowOutline } from "react-icons/ti";
+import { RiSearchEyeLine } from "react-icons/ri";
+import { RiSearchEyeFill } from "react-icons/ri";
 
 interface Reply {
   userId: string;
@@ -84,6 +91,8 @@ const ForumPage: React.FC = () => {
     }
     return true;
   };
+
+  const [isActive, setIsActive] = useState(false);
 
   const handlePostLike = async (postId: string) => {
     if (!checkUserAuthenticated()) return;
@@ -215,6 +224,9 @@ const ForumPage: React.FC = () => {
         <div className="row pt-5">
           <div className="col-md-6 col-lg-3">
             <div className="card mb-4 shadow" style={{ width: "100%" }}>
+              <ul className="list-group list-group-flush">
+                
+              </ul>
               <div className="card-body">
                 <h2 className="card-title display-6 fs-3 fw-bold">
                   Discover what's the current hype
@@ -260,6 +272,7 @@ const ForumPage: React.FC = () => {
                 ))}
               </ul>
             </div>
+            {/* modal code */}
             <div
               className="modal fade"
               id="createPostModal"
