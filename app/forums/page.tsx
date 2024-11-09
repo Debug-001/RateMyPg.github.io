@@ -15,35 +15,36 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import { Toaster, toast } from "react-hot-toast";
-import { CgProfile } from "react-icons/cg";
-import { IoHome } from "react-icons/io5";
-import { IoHomeOutline } from "react-icons/io5";
-import Link from "next/link";
-import { TiLocationArrow } from "react-icons/ti";
-import { TiLocationArrowOutline } from "react-icons/ti";
-import { RiSearchEyeLine } from "react-icons/ri";
-import { RiSearchEyeFill } from "react-icons/ri";
 import { CiCirclePlus } from "react-icons/ci";
+import { PiFunnel } from "react-icons/pi";
+import { GoComment } from "react-icons/go";
+import { GoShareAndroid } from "react-icons/go";
+import Heart from "react-heart";
+import Link from "next/link";
 
 interface Reply {
+  user: any;
   userId: string;
   displayName: string;
-  profileImage: string;
+  userPhotoURL: string;
   content: string;
   timestamp: Timestamp;
   likes: string[];
 }
 
 interface ForumPost {
+  user: any;
+  imageURL: string;
   date: ReactNode;
   id: string;
   title: string;
   content: string;
   userId: string;
   displayName: string;
-  profileImage: string;
+  userPhotoURL: string;
   university: string;
   timestamp: Timestamp;
+  tags: string;
   replies: Reply[];
   likes: string[];
 }
@@ -55,6 +56,33 @@ const ForumPage: React.FC = () => {
   const [newTitle, setNewTitle] = useState("");
   const [newBody, setNewBody] = useState("");
   const { user, loading: authLoading } = useAuth();
+  const [tagsInput, setTagsInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [active, setActive] = useState(false);
+  const [likedPosts, setLikedPosts] = useState({}); // To track liked posts by ID
+
+  const btnColors = [
+    "primary",
+    "info",
+    "secondary",
+    "warning",
+    "danger",
+    "success",
+    "light",
+    "dark",
+  ];
+
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTagsInput(value);
+    if (value.includes(" ")) {
+      const newTag = value.trim();
+      if (newTag && !tags.includes(newTag)) {
+        setTags((prevTags) => [...prevTags, newTag]);
+      }
+      setTagsInput("");
+    }
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -92,10 +120,6 @@ const ForumPage: React.FC = () => {
     return true;
   };
 
-  const [isHomeActive, setIsHomeActive] = useState(false);
-  const [isPopularActive, setIsPopularActive] = useState(false);
-  const [isExploreActive, setIsExploreActive] = useState(false);
-
   const handlePostLike = async (postId: string) => {
     if (!checkUserAuthenticated()) return;
 
@@ -107,6 +131,13 @@ const ForumPage: React.FC = () => {
       ? post?.likes.filter((id) => id !== user.uid)
       : [...(post?.likes || []), user.uid];
 
+    // Update the local state for the like status and count
+    setLikedPosts((prev) => ({
+      ...prev,
+      [postId]: !isLiked, // Toggle the like status
+    }));
+
+    // Update the post's like count in the database
     try {
       await updateDoc(postRef, { likes: updatedLikes });
       toast.success(isLiked ? "Like removed" : "Liked!");
@@ -142,9 +173,11 @@ const ForumPage: React.FC = () => {
   };
 
   const handlePostSubmit = async () => {
-    if (!newTitle.trim() || !newBody.trim() || !checkUserAuthenticated())
+    if (!newTitle.trim() || !newBody.trim()) {
+      toast.error("Please fill in both Title and Content fields.");
       return;
-
+    }
+    if (!checkUserAuthenticated()) return;
     setPosting(true);
     try {
       await addDoc(collection(db, "posts"), {
@@ -156,13 +189,22 @@ const ForumPage: React.FC = () => {
         university: "Sample University",
         timestamp: Timestamp.now(),
         replies: [],
+        tags: tags, // Save the tags with the post
         likes: [],
       });
       setNewTitle("");
       setNewBody("");
+      setTags([]); // Clear tags after posting
       toast.success("Post created successfully!");
+      const closeButton = document.querySelector(
+        '.btn-close[data-bs-dismiss="modal"]'
+      ) as HTMLElement;
+      if (closeButton) {
+        closeButton.click();
+      }
     } catch (error) {
       console.error("Error posting document:", error);
+      toast.error("Failed to create post. Please try again.");
     } finally {
       setPosting(false);
     }
@@ -218,267 +260,187 @@ const ForumPage: React.FC = () => {
     }
   };
 
-  const getActiveClass = (isActive: any) =>
-    isActive ? "bg-secondary text-white" : "text-dark";
-
   return (
     <>
       <Toaster />
       <Navbar />
-      <div className="container-fluid p-4">
-        <div className="row pt-5">
-          <div className="col-md-4 col-lg-3 mx-4">
-            <div className="card mb-4 shadow" style={{ width: "100%" }}>
-              <ul className="list-group list-group-flush">
-                <div
-                  className="gap-4 p-3 d-flex flex-column align-items-start"
-                  style={{ cursor: "pointer" }}
-                >
-                  <div
-                    onClick={() => setIsHomeActive(!isHomeActive)}
-                    onMouseEnter={() => setIsHomeActive(true)}
-                    onMouseLeave={() => setIsHomeActive(false)}
-                    className={`px-3 py-2 d-flex align-items-center gap-2 rounded ${getActiveClass(
-                      isHomeActive
-                    )}`}
-                    style={{ width: "200px" }}
-                  >
-                    <Link
-                      href="/"
-                      className="d-flex align-items-center gap-2 w-100"
-                      style={{ color: isHomeActive ? "white" : "black" }}
-                    >
-                      {isHomeActive ? (
-                        <IoHome size={21} />
-                      ) : (
-                        <IoHomeOutline size={21} />
-                      )}
-                      <span className="d-none d-md-block fs-5">Home</span>
-                    </Link>
-                  </div>
-
-                  <div
-                    onClick={() => setIsPopularActive(!isPopularActive)}
-                    onMouseEnter={() => setIsPopularActive(true)}
-                    onMouseLeave={() => setIsPopularActive(false)}
-                    className={`px-3 py-2 d-flex align-items-center gap-2 rounded ${getActiveClass(
-                      isPopularActive
-                    )}`}
-                    style={{ width: "200px" }} // Same fixed width
-                  >
-                    <Link
-                      href="/"
-                      className="d-flex align-items-center gap-2 w-100"
-                      style={{ color: isPopularActive ? "white" : "black" }}
-                    >
-                      {isPopularActive ? (
-                        <TiLocationArrow size={25} />
-                      ) : (
-                        <TiLocationArrowOutline size={25} />
-                      )}
-                      <span className="d-none d-md-block fs-5">Popular</span>
-                    </Link>
-                  </div>
-
-                  <div
-                    onClick={() => setIsExploreActive(!isExploreActive)}
-                    onMouseEnter={() => setIsExploreActive(true)}
-                    onMouseLeave={() => setIsExploreActive(false)}
-                    className={`px-3 py-2 d-flex align-items-center gap-2 rounded ${getActiveClass(
-                      isExploreActive
-                    )}`}
-                    style={{ width: "200px" }} // Same fixed width
-                  >
-                    <Link
-                      href="/"
-                      className="d-flex align-items-center gap-2 w-100"
-                      style={{ color: isExploreActive ? "white" : "black" }}
-                    >
-                      {isExploreActive ? (
-                        <RiSearchEyeFill size={24} />
-                      ) : (
-                        <RiSearchEyeLine size={24} />
-                      )}
-                      <span className="d-none d-md-block fs-5">Explore</span>
-                    </Link>
-                  </div>
-                </div>
-              </ul>
-              <div className="card-body">
-                <div className="accordion" id="accordionExample">
-                  <div className="accordion-item">
-                    <h2 className="accordion-header">
-                      <button
-                        className="accordion-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                      >
-                        Create a Post
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseOne"
-                      className="accordion-collapse collapse show"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div className="accordion-body">
-                        <button
-                          type="button"
-                          className="d-flex gap-2 align-items-center rounded mt-2 btn-custom"
-                          data-bs-toggle="modal"
-                          data-bs-target="#createPostModal"
-                        >
-                        <CiCirclePlus size={23}/>  Add your Post
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <ul className="list-group list-group-flush">
-                <h2 className="fs-4 p-2 mx-3 mt-3">Communities:</h2>
-                {posts.slice(0, 3).map((post) => (
-                  <li
-                    key={post.id}
-                    className="list-group-item d-flex align-items-center gap-3 py-3 px-2 flex-wrap"
-                  >
-                    <div className="mx-2">
-                      <div className="d-flex align-items-start gap-2">
-                        <CgProfile
-                          size={24}
-                          className="text-secondary flex-shrink-0"
-                        />
-
-                        <div style={{ maxWidth: "100%" }}>
-                          <h6
-                            className="mb-1 fw-bold text-truncate"
-                            style={{ lineHeight: "1.2", maxWidth: "250px" }}
-                          >
-                            {post.title}
-                          </h6>
-                          <small className="text-muted">
-                            Posted on:{" "}
-                            {post.timestamp.toDate().toLocaleString()}
-                          </small>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {/* modal code */}
-            <div
-              className="modal fade"
-              id="createPostModal"
-              tabIndex={-1}
-              aria-labelledby="createPostModalLabel"
-              aria-hidden="true"
+      <div className="container-fluid d-flex flex-column p-4">
+        <div className="d-flex flex-column flex-md-row gap-4 justify-content-between align-items-center">
+          <h2 className="fw-bold text-center text-md-start">Student Forum's</h2>
+          <div className="d-flex gap-3 align-items-center justify-content-center justify-content-md-end">
+            <button className="btn-filter rounded gap-2 d-flex align-items-center">
+              <PiFunnel size={20} />
+              Filter
+            </button>
+            <button
+              type="button"
+              className="d-flex gap-2 align-items-center rounded btn-post"
+              data-bs-toggle="modal"
+              data-bs-target="#createPostModal"
             >
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h1 className="modal-title fs-5" id="createPostModalLabel">
-                      Create your Post
-                    </h1>
-                    <button
-                      type="button"
-                      className="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    />
-                  </div>
-                  <div className="modal-body">
+              <CiCirclePlus size={23} /> Add Post
+            </button>
+          </div>
+          {/* modal section */}
+          <div
+            className="modal fade"
+            id="createPostModal"
+            tabIndex={-1}
+            aria-labelledby="createPostModalLabel"
+            aria-hidden="true"
+          >
+            <div
+              className="modal-dialog modal-dialog-centered"
+              style={{ maxWidth: "600px" }}
+            >
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="createPostModalLabel">
+                    Create New Post
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  />
+                </div>
+                <div className="modal-body">
+                  <div>
+                    <p>Title</p>
                     <input
                       type="text"
-                      className="form-control mb-2"
+                      className="form-control"
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
-                      placeholder="Enter your Question...."
+                      placeholder="What's your question about?"
                     />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="tagsInput" className="form-label">
+                      Tags (Hit Space to enter)
+                    </label>
+                    <div className="d-flex flex-wrap gap-2">
+                      <input
+                        type="text"
+                        id="tagsInput"
+                        className="form-control"
+                        placeholder="Enter tags"
+                        value={tagsInput}
+                        onChange={handleTagsChange}
+                      />
+                      <div className="d-flex gap-2 flex-wrap">
+                        {tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className={`badge rounded-pill text-dark text-bg-${
+                              btnColors[index % btnColors.length]
+                            }`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p>Content</p>
                     <textarea
-                      className="form-control mb-2"
+                      className="form-control"
                       rows={3}
                       value={newBody}
                       onChange={(e) => setNewBody(e.target.value)}
-                      placeholder="Enter content"
+                      placeholder="Provide more details about your question.."
                     />
                   </div>
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={handlePostSubmit}
-                      disabled={posting}
-                    >
-                      {posting ? "Posting..." : "Post"}
-                    </button>
-                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handlePostSubmit}
+                    disabled={posting}
+                  >
+                    {posting ? "Posting..." : "Post"}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-          <div className="col-md-9 col-lg-8 mx-2 shadow pt-3 p-4 px-4 rounded">
-            <h2 className="mb-4  fw-bold">Student Forum's</h2>
+        </div>
+        {/* forums section */}
+        <div className="container pt-5">
+          <div className="mx-2 pt-3 p-4 px-4 rounded">
             {loadingPosts ? (
               <div>Loading...</div>
             ) : posts.length === 0 ? (
               <div>No posts available.</div>
             ) : (
               posts.map((post) => (
-                <div key={post.id} className="mb-4 border p-3">
+                <div key={post.id} className="shadow rounded mb-5 p-3">
                   <div className="d-flex align-items-start">
                     <img
-                      src={post.profileImage}
-                      alt={post.displayName}
-                      className="rounded-circle"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginRight: "10px",
-                      }}
+                      src={user?.photoURL || 'Hi'}
+                      alt={user?.displayName || "User Profile"}
+                      width="35"
+                      height="35"
+                      style={{ borderRadius: "50%" }}
                     />
-                    <div className="p-2">
-                      <h2 className="fs-4 fw-bold mt-2">{post.title}</h2>
-                      <small className="text-muted">
-                        Posted by {post.displayName} on{" "}
-                        {post.timestamp.toDate().toLocaleString()}
-                      </small>
+                    <div className="px-3 w-100">
+                    <Link href={`/forums/${post.id}`}>
+                    <h2 className="fs-4 fw-normal">{post.title}</h2>
+                    </Link>
+                      <div className="d-flex align-items-center flex-wrap">
+                        <small className="text-muted me-3">
+                          Posted at {post.timestamp.toDate().toLocaleString()}
+                        </small>
+                        <div className="d-flex flex-wrap gap-2">
+                          {(Array.isArray(post.tags) ? post.tags : []).map(
+                            (tag, index) => (
+                              <span
+                                key={index}
+                                className={`badge rounded-pill text-light text-bg-${
+                                  btnColors[index % btnColors.length]
+                                }`}
+                              >
+                                {tag}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
                       <p className="mt-2">{post.content}</p>
                     </div>
                   </div>
-
-                  <p className="px-5 mx-3 pt-3">{post.content}</p>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <button
+                  <div className="d-flex mx-5 justify-content-between align-items-center">
+                    <div className="d-flex text-muted gap-3 align-items-center">
+                      <div
                         onClick={() => handlePostLike(post.id)}
-                        className={`btn ${
-                          post.likes.includes(user?.uid)
-                            ? "btn-danger"
-                            : "btn-outline-danger"
-                        } me-2`}
+                        className=""
                       >
-                        <IoMdHeartEmpty /> {post.likes.length}
-                      </button>
-                      {user?.uid === post.userId && (
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDeletePost(post.id)}
-                        >
-                          Delete
-                        </button>
-                      )}
+                        <Heart style={{width:"16px"}}
+                           isActive={
+                            likedPosts[post.id] || post.likes.includes(user?.uid)
+                          } 
+                          onClick={() =>
+                            setLikedPosts((prev) => ({
+                              ...prev,
+                              [post.id]: !prev[post.id],
+                            }))
+                          } 
+                        /> &nbsp; {post.likes.length} Likes
+                      </div>
+                      <div className="">
+                        <GoShareAndroid size={22} /> Share
+                      </div>
                     </div>
                     <button
                       className="btn btn-link"
@@ -495,7 +457,7 @@ const ForumPage: React.FC = () => {
                       <div key={index} className="mt-2 border p-2">
                         <div className="d-flex align-items-center">
                           <img
-                            src={reply.profileImage}
+                            src={reply.user.photoURL || ''}
                             alt={reply.displayName}
                             className="rounded-circle"
                             style={{
@@ -523,14 +485,12 @@ const ForumPage: React.FC = () => {
                           >
                             <IoMdHeartEmpty /> {reply.likes.length}
                           </button>
-                          {user?.uid === reply.userId && (
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => handleDeleteReply(post.id, index)}
-                            >
-                              Delete Reply
-                            </button>
-                          )}
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => handleDeleteReply(post.id, index)}
+                          >
+                            <GoShareAndroid size={23} /> Share
+                          </button>
                         </div>
                       </div>
                     ))}

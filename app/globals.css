@@ -79,14 +79,31 @@
   padding: 8px;
 }
 
-.btn-custom {
-  background-color: #041f31;
-  border: 2px solid #000;
-  border-radius: 10px;
-  color: #fff;
-  padding: 7px 17px;
+.btn-post {
+  background-color: #0066ff;
+  border: 2px solid #0066ff;
+  color: #ffffff;
+  padding: 7px 10px;
   font-size: 15px;
-  font-weight: 400;
+  font-weight: 600;
+}
+
+.btn-post:hover {
+  background-color: #0099ff;
+  border: 2px solid #0099ff;
+  color: #fff;
+  transition: all 0.1s ease-in-out;
+}
+
+.btn-custom {
+  background-color: #002864;
+  border: 2px solid #002864;
+  color: #ffffff;
+  padding: 7px 10px;
+  border: 2px solid #002864;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .btn-custom:hover {
@@ -94,6 +111,22 @@
   border: 2px solid #3d3d3d;
   color: #fff;
   transition: all 0.1s ease-in-out;
+}
+
+.btn-filter {
+  background-color: #ffffff;
+  border: 2px solid #c3c3c3;
+  color: #141414;
+  padding: 7px 15px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.btn-filter:hover {
+  background-color: #fff;
+  border: 2px solid #1d1d1d;
+  color: #000000;
+  transition: all 0.1s ease-in-out !important;
 }
 
 .search-bar-text:hover {
@@ -118,4 +151,14 @@
 
 .icons-list{
   color: black !important;
+}
+
+.custom-modal {
+  width: 90vw;
+  max-width: 600px !important;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
 }

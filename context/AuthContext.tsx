@@ -6,7 +6,9 @@ import { setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 interface User {
-    photoURL: string | StaticImport;
+    username: string;
+    profilePicture: string;
+    photoURL: string;
     uid: string;
     email?: string | null;
     displayName?: string | null;
