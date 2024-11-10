@@ -18,7 +18,6 @@ export const Navbar = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       if (result.user) {
-        router.replace("/");
         toast.success("Logged in Successfully");
       }
     } catch (error) {

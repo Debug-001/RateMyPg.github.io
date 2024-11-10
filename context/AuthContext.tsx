@@ -3,7 +3,6 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { auth } from './Firebase';
 import { setPersistence, browserSessionPersistence } from 'firebase/auth';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 interface User {
     username: string;
@@ -32,7 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 // Once persistence is set, add the auth state listener
                 const unsubscribe = auth.onAuthStateChanged((user) => {
                     if (user) {
-                        setUser(user as User);
+                        setUser(user as unknown as User);
                     } else {
                         setUser(null);
                     }

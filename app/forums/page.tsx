@@ -21,6 +21,7 @@ import { GoComment } from "react-icons/go";
 import { GoShareAndroid } from "react-icons/go";
 import Heart from "react-heart";
 import Link from "next/link";
+import { CgProfile } from "react-icons/cg";
 
 interface Reply {
   user: any;
@@ -60,6 +61,7 @@ const ForumPage: React.FC = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [active, setActive] = useState(false);
   const [likedPosts, setLikedPosts] = useState({}); // To track liked posts by ID
+  const [imgError, setImgError] = useState(false);
 
   const btnColors = [
     "primary",
@@ -387,19 +389,26 @@ const ForumPage: React.FC = () => {
               posts.map((post) => (
                 <div key={post.id} className="shadow rounded mb-5 p-3">
                   <div className="d-flex align-items-start">
-                    <img
-                      src={user?.photoURL || 'Hi'}
-                      alt={user?.displayName || "User Profile"}
-                      width="35"
-                      height="35"
-                      style={{ borderRadius: "50%" }}
-                    />
+                    <div className="user-icon me-2">
+                      {!imgError ? (
+                        <img
+                          src={user?.photoURL}
+                          alt="User Profile"
+                          width={40}
+                          height={40}
+                          style={{ borderRadius: "50%" }}
+                          onError={() => setImgError(true)}
+                        />
+                      ) : (
+                        <CgProfile size={40} />
+                      )}
+                    </div>
                     <div className="px-3 w-100">
-                    <Link href={`/forums/${post.id}`}>
-                    <h2 className="fs-4 fw-normal">{post.title}</h2>
-                    </Link>
+                      <Link href={`/forums/${post.id}`}>
+                        <h2 className="fs-4 fw-normal">{post.title}</h2>
+                      </Link>
                       <div className="d-flex align-items-center flex-wrap">
-                        <small className="text-muted me-3">
+                        <small className="text-muted me-3 pt-2">
                           Posted at {post.timestamp.toDate().toLocaleString()}
                         </small>
                         <div className="d-flex flex-wrap gap-2">
@@ -417,97 +426,50 @@ const ForumPage: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      <p className="mt-2">{post.content}</p>
+                      <p className="mt-4">{post.content}</p>
                     </div>
                   </div>
                   <div className="d-flex mx-5 justify-content-between align-items-center">
-                    <div className="d-flex text-muted gap-3 align-items-center">
-                      <div
-                        onClick={() => handlePostLike(post.id)}
-                        className=""
-                      >
-                        <Heart style={{width:"16px"}}
-                           isActive={
-                            likedPosts[post.id] || post.likes.includes(user?.uid)
-                          } 
+                    <div className="d-flex text-muted gap-3 mx-3 mt-2 align-items-center">
+                      <div onClick={() => handlePostLike(post.id)}>
+                        <Heart
+                          style={{ width: "16px" }}
+                          isActive={
+                            likedPosts[post.id] ||
+                            post.likes.includes(user?.uid)
+                          }
                           onClick={() =>
                             setLikedPosts((prev) => ({
                               ...prev,
                               [post.id]: !prev[post.id],
                             }))
-                          } 
-                        /> &nbsp; {post.likes.length} Likes
+                          }
+                        />{" "}
+                        &nbsp; {post.likes.length} Likes
                       </div>
-                      <div className="">
-                        <GoShareAndroid size={22} /> Share
-                      </div>
-                    </div>
-                    <button
-                      className="btn btn-link"
-                      data-bs-toggle="collapse"
-                      data-bs-target={`#replies-${post.id}`}
-                      aria-expanded="false"
-                      aria-controls={`replies-${post.id}`}
-                    >
-                      {post.replies.length} Replies
-                    </button>
-                  </div>
-                  <div className="collapse" id={`replies-${post.id}`}>
-                    {post.replies.map((reply, index) => (
-                      <div key={index} className="mt-2 border p-2">
-                        <div className="d-flex align-items-center">
-                          <img
-                            src={reply.user.photoURL || ''}
-                            alt={reply.displayName}
-                            className="rounded-circle"
-                            style={{
-                              width: "30px",
-                              height: "30px",
-                              marginRight: "5px",
-                            }}
-                          />
-                          <div>
-                            <h6 className="m-0">{reply.displayName}</h6>
-                            <small className="text-muted">
-                              {reply.timestamp.toDate().toLocaleString()}
-                            </small>
-                          </div>
-                        </div>
-                        <p>{reply.content}</p>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <button
-                            onClick={() => handleReplyLike(post.id, index)}
-                            className={`btn ${
-                              reply.likes.includes(user?.uid)
-                                ? "btn-danger"
-                                : "btn-outline-danger"
-                            } me-2`}
-                          >
-                            <IoMdHeartEmpty /> {reply.likes.length}
-                          </button>
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => handleDeleteReply(post.id, index)}
-                          >
-                            <GoShareAndroid size={23} /> Share
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    <textarea
-                      className="form-control mb-2"
-                      placeholder="Write a reply..."
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          handleReplySubmit(
-                            post.id,
-                            (e.target as HTMLTextAreaElement).value
+                      <button
+                        className="btn"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}/posts/${post.id}`
                           );
-                          (e.target as HTMLTextAreaElement).value = "";
-                        }
-                      }}
-                    />
+                          toast.success("Link copied");
+                        }}
+                      >
+                        <GoShareAndroid size={18} /> Share
+                      </button>
+                    </div>
+                    <Link href={`/forums/${post.id}`}>
+                      <button
+                        className="btn btn-link"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#replies-${post.id}`}
+                        aria-expanded="false"
+                        aria-controls={`replies-${post.id}`}
+                      >
+                        {post.replies.length} Replies
+                      </button>
+                    </Link>
                   </div>
                 </div>
               ))
