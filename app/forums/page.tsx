@@ -13,6 +13,7 @@ import {
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
+import Image from 'next/image'
 import { useAuth } from "@/context/AuthContext";
 import { Toaster, toast } from "react-hot-toast";
 import { CiCirclePlus } from "react-icons/ci";
@@ -391,7 +392,7 @@ const ForumPage: React.FC = () => {
                   <div className="d-flex align-items-start">
                     <div className="user-icon me-2">
                       {!imgError ? (
-                        <img
+                        <Image
                           src={user?.photoURL}
                           alt="User Profile"
                           width={40}
@@ -399,6 +400,7 @@ const ForumPage: React.FC = () => {
                           style={{ borderRadius: "50%" }}
                           onError={() => setImgError(true)}
                         />
+                        // <div></div>
                       ) : (
                         <CgProfile size={40} />
                       )}

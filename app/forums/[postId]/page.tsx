@@ -12,6 +12,7 @@ import {
   onSnapshot,
   updateDoc,
   deleteDoc,
+  getDoc,
   Timestamp,
 } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
@@ -67,7 +68,26 @@ const PostPage: React.FC = () => {
 
   useEffect(() => {
     if (!postId) return;
+    const unsubscribe = onSnapshot(doc(db, "posts", postId), (snapshot) => {
+      if (snapshot.exists()) {
+        setPost({
+          id: snapshot.id,
+          ...(snapshot.data() as ForumPost),
+          timestamp: snapshot.data().timestamp || Timestamp.now(),
+          replies: snapshot.data().replies || [],
+          likes: snapshot.data().likes || [],
+        });
+      } else {
+        setPost(null);
+      }
+      setLoadingPost(false);
+    });
+    
+    return unsubscribe;
+  }, [postId]);
 
+  useEffect(() => {
+    if (!postId) return;
     const unsubscribe = onSnapshot(doc(db, "posts", postId), (doc) => {
       if (doc.exists()) {
         setPost({
@@ -83,7 +103,6 @@ const PostPage: React.FC = () => {
         setLoadingPost(false);
       }
     });
-
     return unsubscribe;
   }, [postId]);
 
@@ -186,62 +205,59 @@ const PostPage: React.FC = () => {
           <div>Loading post...</div>
         ) : post ? (
           <div className=" p-3 rounded mb-4 ">
-             <div className="d-flex gap-2 w-100 flex-wrap">
-      {/* Profile Picture or Placeholder */}
-      <div className="user-icon me-2">
-        {!imgError ? (
-          <Image
-            src={user?.photoURL}
-            alt="User Profile"
-            width={40}
-            height={40}
-            style={{ borderRadius: '50%' }}
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <CgProfile size={40} />
-        )}
-      </div>
+            <div className=" d-flex flex-row gap-3 w-100">
+              <div className="user-icon me-2">
+                {!imgError ? (
+                  <Image
+                    src={post.userPhotoURL}
+                    alt="User Profile"
+                    width={40}
+                    height={40}
+                    style={{ borderRadius: "50%" }}
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <CgProfile size={40} />
+                )}
+              </div>
+              <div className="d-flex flex-column flex-grow-1">
+                <div className="d-flex justify-content-between align-items-center">
+                  <h2 className="fs-5 mb-0 me-2">{post.title}</h2>
+                  {user?.uid === post.userId && (
+                    <button
+                      className="btn-delete ms-auto"
+                      onClick={handleDeletePost}
+                    >
+                      <AiOutlineDelete size={20} />
+                    </button>
+                  )}
+                </div>
+                <div className="d-flex align-items-center flex-wrap mt-2">
+                  <small className="text-muted me-3">
+                    Posted at {post.timestamp.toDate().toLocaleString()}
+                  </small>
+                  <div className="d-flex flex-wrap gap-2">
+                    {(Array.isArray(post.tags) ? post.tags : []).map(
+                      (tag, index) => (
+                        <span
+                          key={index}
+                          className={`badge rounded-pill text-light text-bg-${
+                            btnColors[index % btnColors.length]
+                          }`}
+                        >
+                          {tag}
+                        </span>
+                      )
+                    )}
+                  </div>
+                </div>
+                <p className="post-content fs-5 text-black mt-2">
+                  {post.content}
+                </p>
+              </div>
+            </div>
 
-      {/* Main Content */}
-      <div className="flex-grow-1">
-        <div className="d-flex justify-content-between align-items-center flex-wrap">
-          <h2 className="fs-5 mb-0 me-2">{post.title}</h2>
-          {/* Delete Button on the Right */}
-          {user?.uid === post.userId && (
-            <button
-              className="btn-delete  ms-auto"
-              onClick={handleDeletePost}
-            >
-              <AiOutlineDelete size={20} />
-            </button>
-          )}
-        </div>
-
-        {/* Post Metadata */}
-        <div className="d-flex align-items-center flex-wrap mt-2">
-          <small className="text-muted me-3">
-            Posted at {post.timestamp.toDate().toLocaleString()}
-          </small>
-          <div className="d-flex flex-wrap gap-2">
-            {(Array.isArray(post.tags) ? post.tags : []).map((tag, index) => (
-              <span
-                key={index}
-                className={`badge rounded-pill text-light text-bg-${
-                  btnColors[index % btnColors.length]
-                }`}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Post Content */}
-        <p className="post-content fs-5 text-black mt-2">{post.content}</p>
-      </div>
-    </div>
-            <div className="d-flex mx-5 px-2 gap-3 text-muted">
+            <div className="d-flex mx-5 px-3 mt-2 gap-3 text-muted">
               <div className="like-container">
                 <Heart
                   style={{ width: "16px" }}
@@ -253,18 +269,26 @@ const PostPage: React.FC = () => {
                 &nbsp; {post.likes.length} Likes
               </div>
               <div>
-                <div className="">
+                <div
+                  className="btn p-0"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/posts/${post.id}`
+                    );
+                    toast.success("Link copied");
+                  }}
+                >
                   <GoShareAndroid size={18} /> Share
                 </div>
               </div>
             </div>
-            <div className="comments mt-4">
+            <div className="container mx-5 px-3 pt-2 comments mt-4">
               <h4 className="fs-6 mb-3">Replies</h4>
               {post.replies.map((reply, index) => (
                 <div key={index} className="reply p-2  rounded mb-2">
-                  <p className="mb-1">{reply.content}</p>
+                  <p className="bg-light rounded p-2  mb-1">{reply.content}</p>
                   <button
-                    className="btn btn-light btn-sm d-flex align-items-center"
+                    className="btn btn-light btn-sm mt-3 d-flex align-items-center"
                     onClick={() => handleReplyLike(index)}
                   >
                     <IoMdHeartEmpty className="me-1" />
@@ -300,3 +324,6 @@ const PostPage: React.FC = () => {
 };
 
 export default PostPage;
+function setAuthorPhotoURL(userPhotoURL: any) {
+  throw new Error("Function not implemented.");
+}
